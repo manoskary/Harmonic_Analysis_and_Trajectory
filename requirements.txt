@@ -1,0 +1,3 @@
+pip3 install music21>= 5.5
+
+pip3 isntall jupyter>=4.4.0
