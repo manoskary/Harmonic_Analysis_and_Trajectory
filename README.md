@@ -9,3 +9,6 @@ Python Jupyter-Notebook modules :
     - scipy
     - matplotlib
     - jupyter
+
+
+# Install dependencies with sudo pip install -r requirements.txt (use pip for python 2 & pip3 for python 3)
