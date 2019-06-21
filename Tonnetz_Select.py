@@ -2,6 +2,18 @@ import music21 as ms
 from itertools import product
 import ast
 
+
+def parsedFile(file):
+    mChords = file.chordify()
+    chordList = []
+    chordVectors = []
+    for c in mChords.recurse().getElementsByClass('Chord'):
+        chordList.append(c.orderedPitchClasses)
+        chordVectors.append(c.intervalVector)
+    # print('The number of chords found is : ',  len(chordList))
+    return chordList, chordVectors
+
+
 def parseMidi(midifile):
     mfile = ms.converter.parse(midifile)
     mChords = mfile.chordify()
@@ -10,7 +22,7 @@ def parseMidi(midifile):
     for c in mChords.recurse().getElementsByClass('Chord'):
         chordList.append(c.orderedPitchClasses)
         chordVectors.append(c.intervalVector)
-    print('The number of chords found is : ',  len(chordList))
+    # print('The number of chords found is : ',  len(chordList))
     return chordList, chordVectors
     
 
@@ -34,46 +46,35 @@ def TonnetzConnectivity(chordVectors):
         'T345' : Connected(chordVectors, 2, 3 ,4)
     }
     GetTheBestTonnetz = max(TonnetzConnectivity, key=TonnetzConnectivity.get)  # Just use 'min' instead of 'max' for minimum.
-    print('The Tonnetz Selected is :', GetTheBestTonnetz, '\n' + 'The number of represented chords in this system is :', TonnetzConnectivity[GetTheBestTonnetz])
+    # print('The Tonnetz Selected is :', GetTheBestTonnetz, '\n' + 'The number of represented chords in this system is :', TonnetzConnectivity[GetTheBestTonnetz])
     return(GetTheBestTonnetz)
 
-def TonnetzConfig(GetTheBestTonnetz):
-    if GetTheBestTonnetz == 'T129' :
-        Tonnetz = [1, 2, 9]
-    elif GetTheBestTonnetz == 'T138' :
-        Tonnetz = [1, 3, 8]
-    elif GetTheBestTonnetz == 'T147' :
-        Tonnetz = [1, 4, 7]
-    elif GetTheBestTonnetz == 'T156' :
-        Tonnetz = [2, 5, 6]
-    elif GetTheBestTonnetz == 'T237' :
-        Tonnetz = [2, 3, 7]
-    # elif GetTheBestTonnetz == 'T246' :
-    #     Tonnetz = [2, 4, 6]
-    elif GetTheBestTonnetz == 'T345' :
-        Tonnetz = [3, 4, 5]
+def TonnetzDict():
+    DictOfTonnetze =  {
+        'T129' : [1, 2, 9],
+        'T138' : [1, 3, 8],
+        'T147' : [1, 4, 7],
+        'T156' : [1, 5, 6],
+        'T237' : [2, 3, 7],
+        'T345' : [3, 4, 5]
+    }
+    return DictOfTonnetze
+
+def TonnetzConfigDict(GetTheBestTonnetz):
+    DictOfTonnetze = TonnetzDict()
+    Tonnetz = DictOfTonnetze[GetTheBestTonnetz]
     return Tonnetz
 
+def axesDict(T_axes):
+    intervalList = [T_axes[0], T_axes[1], T_axes[2], (12- T_axes[0]), (12- T_axes[1]), (12- T_axes[2])]
+    return intervalList
 
 def findIfConnected(interval, T_axes):
-    axe1 = T_axes[0]
-    axe2 = T_axes[1]
-    axe3 = T_axes[2]
-    if interval == axe1:
-        value = 1
-    elif interval == axe2:
-        value = 1
-    elif interval == axe3 :
-        value = 1
-    elif interval == (12 - axe3):
-        value = 1
-    elif interval == (12 - axe2):
-        value = 1
-    elif interval == (12 - axe1):
-        value = 1
+    intervalList = axesDict(T_axes)
+    if interval in intervalList:
+        return 1
     else :
-        value = 0
-    return value
+        return 0
 
 def removeDoubles(l, lvec):
     N = len(l)
@@ -91,6 +92,12 @@ def removeDoubles(l, lvec):
 def checkEdges(chord, T_axes):
     if len(chord) == 1 :
         return False
+    elif len(chord) == 2 :
+        interval = (chord[0] - chord[1]) %12
+        if findIfConnected(interval, T_axes) == 1 :
+            return True
+        else :
+            return False
     else:
         constrain = True
         pdct = product(chord, chord)
@@ -100,67 +107,129 @@ def checkEdges(chord, T_axes):
             if findIfConnected((a-b)%12, T_axes) == 1 :
                 edges.append((a, b))
         if edges != [] :
-            l, l2 = zip(*edges)
+            proj1, proj2 = zip(*edges)
         else :
-            l = []
+            proj1 = []
         # If a note is not contained in the edges return false
-        for el in chord:
-            if el not in l:
+        for note in chord:
+            if note not in proj1:
                 constrain = False
         # If all the above is satisfied check if an edge is isolated
-        if constrain == True :
+        if constrain :
             for (a, b) in edges:
-                if l.count(a) == 1 and l.count(b) == 1:
+                if proj1.count(a) == 1 and proj1.count(b) == 1:
                     constrain = False
         return constrain
     
-def checkConnectivity(listofchords, currentindex, chord, T_axes, alpha):
-    if alpha < 3 :
+def checkConnectivityBack(listofchords, currentindex, chord, T_axes, alpha=1):
+    # Check if there are enough elements recursive call and limit the loop of the recursive call
+    if (currentindex - alpha >= 0 and alpha < 6):
         conexCondition = checkEdges(chord, T_axes)
         if conexCondition == False:
             my_set = set(listofchords[currentindex]+listofchords[currentindex-alpha])
             NewChord = list(my_set)
             alpha += 1
             # Recursive call
-            return checkConnectivity(listofchords, currentindex, NewChord, T_axes, alpha)
+            return checkConnectivityBack(listofchords, currentindex, NewChord, T_axes, alpha)
         else :
             return chord
     else :
-        print(chord)
-        raise RuntimeError('Infinite Loop')
-       
+        return 'Error recursive call' 
+
     
-def removeNonConnected(l1, l2, T_axes):
+def checkConnectivityForth(listofchords, currentindex, chord, T_axes, alpha=1):
+    # Check if there are enough elements recursive call and limit the loop of the recursive call
+    if (currentindex + alpha < len(listofchords) and alpha < 6):
+        conexCondition = checkEdges(chord, T_axes)
+        if conexCondition == False:
+            my_set = set(listofchords[currentindex]+listofchords[currentindex+alpha])
+            NewChord = list(my_set)
+            alpha += 1
+            # Recursive call
+            return checkConnectivityForth(listofchords, currentindex, NewChord, T_axes, alpha)
+        else :
+            return chord
+    else :
+        return 'Error recursive call'
+
+def checkConnectivityBackForth(listofchords, currentindex, chord, T_axes, alpha=1):
+    if listofchords[currentindex-alpha] :
+        return []
+    else :
+        # Check if there are enough elements recursive call and limit the loop of the recursive call
+        if (currentindex - alpha >= 0 and alpha < 15):
+            conexCondition = checkEdges(chord, T_axes)
+            if conexCondition == False:
+                my_set = set(listofchords[currentindex]+listofchords[currentindex-alpha])
+                NewChord = list(my_set)
+                alpha += 1
+                # Recursive call
+                return checkConnectivityForthBack(listofchords, currentindex, NewChord, T_axes, alpha)
+            else :
+                return chord
+        else :
+            raise RecursionError('Too many recursions')
+
+    
+def checkConnectivityForthBack(listofchords, currentindex, chord, T_axes, alpha=1):
+    if listofchords[currentindex-alpha] :
+        return []
+    else :
+        # Check if there are enough elements recursive call and limit the loop of the recursive call
+        if (currentindex + alpha <= len(listofchords) and alpha < 15):
+            conexCondition = checkEdges(chord, T_axes)
+            if conexCondition == False:
+                my_set = set(listofchords[currentindex]+listofchords[currentindex+alpha])
+                NewChord = list(my_set)
+                alpha += 1
+                # Recursive call
+                return checkConnectivityBackForth(listofchords, currentindex, NewChord, T_axes, alpha)
+            else :
+                return chord
+        else :
+            raise RecursionError('Too many recursions')
+    
+def removeNonConnected(listOfChords, listOfVectors, T_axes):
     axe1 = T_axes[0] - 1
     axe2 = T_axes[1] - 1
     if T_axes[2] > 6:
         axe3 = (12 - T_axes[2]) - 1
     else : 
         axe3 = T_axes[2] - 1
-    nl1 = l1
-    nl2 = []
-    nl3 = []
-    for i, vector in enumerate(l2):
-        k = sum(vector) - 2*(vector[axe1] + vector[axe2] + vector[axe3])
-        if (
-           k < 0 
-        ):
-            nl2.append(vector)
+    newListOfChords = listOfChords
+    newListOfVectors = []
+    for index, vector in enumerate(listOfVectors):
+        axesCondition = sum(vector) - 2*(vector[axe1] + vector[axe2] + vector[axe3])
+        if axesCondition < 0 :
+            newListOfVectors.append(vector)
         else :
-            chord = l1[i]
-            kappa = checkConnectivity(l1, i, chord, T_axes, 1)
-            del nl1[i]
-            nl1.insert(i, kappa)
-    return nl1, nl2
-
-
+            chord = listOfChords[index]
+            enlargeChord = checkConnectivityBack(listOfChords, index, chord, T_axes)
+            if enlargeChord == 'Error recursive call' :
+                enlargeChord = checkConnectivityForth(listOfChords, index, chord, T_axes)
+                if enlargeChord == 'Error recursive call' :
+                    enlargeChord = checkConnectivityBackForth(listOfChords, index, chord, T_axes)
+            if enlargeChord == [] :
+                enlargeChord = newListOfChords[index-1]
+            del newListOfChords[index]
+            newListOfChords.insert(index, enlargeChord)
+    return newListOfChords, newListOfVectors
 
 
 def fromMidiToPCS(midifile):
     chordList, chordVectors = parseMidi(midifile)
-    Tonnetz = TonnetzConfig(TonnetzConnectivity(chordVectors))
+    Tonnetz = TonnetzConfigDict(TonnetzConnectivity(chordVectors))
     chordListNoDoubles, chordListNoDoublesVec = removeDoubles(chordList, chordVectors)
-    print('After duplicate reduction the number of chords is :', len(chordListNoDoubles))
+    # print('After duplicate reduction the number of chords is :', len(chordListNoDoubles))
     chordListConnect, vectorsListConnect = removeNonConnected(chordListNoDoubles, chordListNoDoublesVec, Tonnetz)
     print(len(chordListConnect))
+    return chordListConnect, Tonnetz
+
+def analysisFromCorpus(file):
+    chordList, chordVectors = parsedFile(file)
+    Tonnetz = TonnetzConfigDict(TonnetzConnectivity(chordVectors))
+    chordListNoDoubles, chordListNoDoublesVec = removeDoubles(chordList, chordVectors)
+    # print('After duplicate reduction the number of chords is :', len(chordListNoDoubles))
+    chordListConnect, vectorsListConnect = removeNonConnected(chordListNoDoubles, chordListNoDoublesVec, Tonnetz)
+    # print(len(chordListConnect))
     return chordListConnect, Tonnetz
