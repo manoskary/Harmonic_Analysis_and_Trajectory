@@ -18,7 +18,7 @@ def BachTonnetzSelect(number):
 	    listOfBachPieces[chorale] = analysisFromCorpus(file)
 	return listOfBachPieces
 
-def BachTrajectoryGraphs(number):
+def BachTrajectoryGraphs(number, type = 'NewTrajectory'):
 	listOfBachPieces = BachTonnetzSelect(number)
 	BachTrajectoryPoints = dict()
 	BachTrajectoryPointWeights = dict()
@@ -28,7 +28,10 @@ def BachTrajectoryGraphs(number):
 	for key in listOfBachPieces :
 	    chordList, Tonnetz = listOfBachPieces[key]
 	    firstPoint = PlaceFirstNote(chordList, Tonnetz)
-	    trajectory = NewTrajectory(chordList, Tonnetz, firstPoint)
+	    if type == 'NewTrajectory' :
+	    	trajectory = NewTrajectory(chordList, Tonnetz, firstPoint)
+	    else : 
+	    	trajectory = TrajectoryLookBefore(chordList, Tonnetz, firstPoint)
 	    Edges = TrajectoryNoteEdges(trajectory) + trajectory.connectingEdges
 	    
 	    setOfPoints, multiSetOfPoints = SetOfPoints(trajectory)
@@ -212,9 +215,44 @@ def CentralitiesScatterPlot(dictOfGraphs1, dictOfGraphs2, typePlot='Eigenvalues'
 	ax.scatter(x1, y1, z1,  alpha=0.5, c='b', edgecolors='none', s=30)
 	ax.scatter(x2, y2, z2, alpha=0.5, c='r', edgecolors='none', s=30)
 
-	ax.set_xlabel(typePlot)
+	if typePlot == 'Mix' :
+		ax.set_xlabel('Eigen')
+		ax.set_ylabel('Harmonic')
+		ax.set_zlabel('Betweenness')
+	elif typePlot == 'Mix2' :
+		ax.set_xlabel('Eigen')
+		ax.set_ylabel('GlobalClustering')
+		ax.set_zlabel('Betweenness')
+	elif typePlot == 'Mix3' :
+		ax.set_xlabel('Eigenvalues')
+		ax.set_ylabel('GlobalClustering')
+		ax.set_zlabel('Harmonic')
+	else : 
+		ax.set_xlabel(typePlot)
 
 	plt.show()
+
+def plotCentrality(dictOfGraphs, numberOfPoints=3, typeOfCentrality='kaltz') :
+	fig = plt.figure()
+	ax = Axes3D(fig)
+
+	points = []
+
+	for graph in dictOfGraphs.values():
+		point = chooseCentrality(graph, numberOfPoints, typeOfCentrality)
+		points.append(point)
+
+	x, y, z = zip(*points)
+
+	ax.scatter(x, y, z,  alpha=0.5, c='b', edgecolors='none', s=30)
+
+	ax.set_xlabel(typeOfCentrality)
+
+
+def plotAllCentralities3D(dictOfGraphs):
+	centralities = ['kaltz', 'betweenness', 'closeness', 'harmonic', 'degree']
+	for centrality in centralities :
+		plotCentrality(dictOfGraphs, 3, centrality)
 
 
 def GetWorksByComposer(composerName):
@@ -222,10 +260,13 @@ def GetWorksByComposer(composerName):
 	dictOfGraphs = dict()
 	if len(listofWorks) > 0 :
 		for piece in listofWorks:
-			graph = GraphOfNewPiece(piece, 'corpus')
-			dictOfGraphs = Merge(dictOfGraphs, graph)
+			try :
+				print("Building Trajectory for ", piece)
+				graph = GraphOfNewPiece(piece, 'corpus')
+				dictOfGraphs = Merge(dictOfGraphs, graph)
+			except :
+				print("--> Cannot build Trajectory for ", piece)
 	return dictOfGraphs
-
 
 
 def GetWorksByDirectory(directory): 

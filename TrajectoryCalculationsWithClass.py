@@ -124,8 +124,6 @@ def IndexesOfMinimum(chord1, chord2, Tonnetz):
                     minCheck = distVal
     return minimumIndex1, minimumIndex2
 
-
-
 def positionOfTheMinNote(chord1, chord2, coordDict1, Tonnetz):
     index1, index2 = IndexesOfMinimum(chord1, chord2, Tonnetz)
     noteA = chord1[index1]
@@ -135,33 +133,6 @@ def positionOfTheMinNote(chord1, chord2, coordDict1, Tonnetz):
     position = coordDict1[noteA]
     newPoint = intervalToPoint(interval, position, Tonnetz)
     return newPoint, position
-
-
-def Trajectory(listOfChords, Tonnetz, axes=(0,0)) :
-    ListOfDict = []
-    for index, chord in enumerate(listOfChords):
-        if index == 0 :
-            ListOfDict.append(ChordConfiguration(chord, axes, Tonnetz))
-        elif index == 1:
-            newPos = positionOfTheMinNote(listOfChords[index-1], chord, ListOfDict[index-1], Tonnetz)[0]
-            axes = newPos
-            if not isValidPos(axes):
-                axes = positionOfTheMinNoOe(listofChords[index-1], listofChords[index+1], ListOfDict[index-1], Tonnetz)[0]
-                nextChordCoordDict = ChordConfiguration(listOfChords[index+1], axes, Tonnetz)
-                newPos = positionOfTheMinNote(listOfChords[index+1], chord, nextChordCoordDict, Tonnetz)[0]
-                ListOfDict.append(ChordConfiguration(listOfChords[index], newPos, Tonnetz))
-            else:
-                ListOfDict.append(ChordConfiguration(chord, axes, Tonnetz))
-        else :
-            newPos = positionOfTheMinNote(listOfChords[index-1], chord, ListOfDict[index-1], Tonnetz)[0]
-            axes = newPos
-            if not isValidPos(axes) :
-                axes = positionOfTheMinNote(listOfChords[index-2], chord, ListOfDict[index-2], Tonnetz)[0]
-                if not isValidPos(axes) :
-                    print(chord1, chord2, coordDict1,noteA, noteB)
-                    raise RuntimeError("Couldn't match closest points")
-            ListOfDict.append(ChordConfiguration(chord, axes, Tonnetz))
-    return ListOfDict
 
 def centroid(listOfPoints):
     x, y = zip(*listOfPoints)
@@ -272,50 +243,36 @@ def NewTrajectory(listOfChords, Tonnetz, origin=(0,0)) :
 
 #----------------------------------------------OTHER TRAJECTORY--------------------------
 
+def trajectoryRecursion(trajectory) :
+    alpha = 1
+    while trajectory.index - alpha >= 0 :
+        try :
+            return computeChordCoord(trajectory.getThisChord() , trajectory.getLastPosition(alpha) , trajectory.Tonnetz)
+        except PlacementError :
+            pass
+        alpha += 1
+    raise PlacementError('Non recursive definition of trajectory')
 
-def TrajectoryLookBeforeLookAhead(listOfChords, listOfBeetweenEdges, listOfDict, Tonnetz, index):
-    if index > 1 and index < len(listOfChords)-1 :
-        thisChord = listOfChords[index]
-        pos1, lastPos1 = positionOfTheMinNote(listOfChords[index-1], thisChord, listOfDict[index-1], Tonnetz)
-        thisChordPoints1 = ChordConfiguration(thisChord, pos1, Tonnetz) 
-        posNext = positionOfTheMinNote(listOfChords[index-1], listOfChords[index+1], listOfDict[index-1], Tonnetz)[0]
-        nextChordPoints = ChordConfiguration(listOfChords[index+1], posNext, Tonnetz)
-        pos2, lastPos2 = positionOfTheMinNote(listOfChords[index+1], thisChord, nextChordPoints, Tonnetz)
-        thisChordPoints2 = ChordConfiguration(thisChord, pos2, Tonnetz)
-        concatPoints1 = concat3DictValues(thisChordPoints1, listOfDict[index-1] , listOfDict[index-2] )
-        concatPoints2 = concat3DictValues(thisChordPoints2, listOfDict[index-1] , listOfDict[index-2] )
-        graph1 = list(set(concatPoints1))
-        graph2 = list(set(concatPoints2))
-        distance1 = maximumDistanceOfConvexHull(graph1)
-        distance2 = maximumDistanceOfConvexHull(graph2)
-        if pos1 == (104, 104) and pos2 == (104, 104) :
-            raise ReferenceError("Couldn't match closest points")
-        if distance1 > distance2 :
-            listOfDict.append(thisChordPoints2)
-            listOfBeetweenEdges.append([(pos2, lastPos2)])
-        else :
-            listOfDict.append(thisChordPoints1)
-            listOfBeetweenEdges.append([(pos1, lastPos1)])
+def trajectoryRecursive(trajectory) :
+    if trajectory.index > 1 and trajectory.index <= len(trajectory.listOfChords)-1 :
+        return trajectoryRecursion(trajectory)
     else :
-        thisChord = listOfChords[index]
-        pos1, lastPos1 = positionOfTheMinNote(listOfChords[index-1], thisChord, listOfDict[index-1], Tonnetz)
-        if pos1 == (104, 104) :
-            raise ReferenceError("Couldn't match closest points")
-        thisChordPoints1 = ChordConfiguration(thisChord, pos1, Tonnetz) 
-        listOfDict.append(thisChordPoints1)
-        listOfBeetweenEdges.append([(pos1, lastPos1)])
-        
+        raise IndexError()    
 
-def NewTrajectoryLookBefore(listOfChords, Tonnetz, origin=(0,0)) :
-    listOfDict = []
-    listOfBeetweenEdges = []
-    for index, chord in enumerate(listOfChords):
-        if index == 0 :
-            listOfDict.append(ChordConfiguration(chord, origin, Tonnetz))
-        else :
-            TrajectoryLookBeforeLookAhead(listOfChords, listOfBeetweenEdges, listOfDict, Tonnetz, index)
-    return listOfDict, listOfBeetweenEdges 
-
+def TrajectoryLookBefore(listOfChords, Tonnetz, origin=(0,0)):
+    trajectory = TrajectoryClass(ChordConfiguration(listOfChords[0], origin, Tonnetz), listOfChords, Tonnetz)
+    for index, chord in enumerate(listOfChords) :
+        if index == 0 : 
+            continue
+        elif index == 1 :
+            try :
+                thisChordCoord, connectingEdge = computeChordCoord(trajectory.getThisChord(), trajectory.getLastPosition(), trajectory.Tonnetz)
+            except PlacementError :
+                thisChordCoord, connectingEdge = placeChordWithVirtualRef(trajectory.getThisChord(), trajectory.getLastPosition(), trajectory.getNextChord(), trajectory.Tonnetz)
+        else : 
+            thisChordCoord, connectingEdge = trajectoryRecursive(trajectory)
+        trajectory.addChord(thisChordCoord, connectingEdge)
+    return trajectory
 
 
 #------------------------TRAJECTORY EDGES----------------------------------    

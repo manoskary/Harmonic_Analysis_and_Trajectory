@@ -137,13 +137,12 @@ def CentralityPoint2D(graph, numberOfPoints, typePlot):
     max_eigenvector = max(c_eigenvector)
     points['Eigenvalues'] = c_eigenvector
 
-
     c_betweenness = nx.betweenness_centrality(graph)
     c_betweenness = heapq.nlargest(numberOfPoints, list(c_betweenness.values()))
     max_betweenness = max(c_betweenness)
     points['Betweenness'] = c_betweenness
 
-    c_closeness = nx.betweenness_centrality(graph)
+    c_closeness = nx.closeness_centrality(graph)
     c_closeness = heapq.nlargest(numberOfPoints, list(c_closeness.values()))
     max_closeness = max(c_closeness)
     points['Closeness'] = c_closeness
@@ -158,12 +157,50 @@ def CentralityPoint2D(graph, numberOfPoints, typePlot):
     max_degree = max(c_degree)
     points['Degree'] = c_degree
 
-    c_communicability = nx.degree_centrality(graph)
-    c_communicability = heapq.nlargest(numberOfPoints, list(c_communicability.values()))
-    max_communicability = max(c_communicability)
-    points['Communicability'] = c_communicability
+    glCoe = GlobalClusteringCoefficient(graph)
 
-    points['Mix'] = (max_eigenvector, max_harmonic, max_degree)
+    points['Mix'] = (max_eigenvector, max_harmonic, max_betweenness)
+    points['Mix2'] = (max_eigenvector, glCoe, max_betweenness)
+    points['Mix3'] = (max_eigenvector, glCoe, max_harmonic)
+    points['Mix4'] = (glCoe, max_betweenness, max_harmonic)
 
     return points[typePlot]
 
+def kaltzCentrality(graph, numberOfPoints):
+    c_eigenvector = nx.katz_centrality(graph)
+    c_eigenvector = heapq.nlargest(numberOfPoints, list(c_eigenvector.values()))
+    return c_eigenvector
+
+def betweennessCentrality(graph, numberOfPoints) :   
+    c_betweenness = nx.betweenness_centrality(graph)
+    c_betweenness = heapq.nlargest(numberOfPoints, list(c_betweenness.values()))
+    return c_betweenness
+
+def closenessCentrality(graph, numberOfPoints) :
+    c_closeness = nx.closeness_centrality(graph)
+    c_closeness = heapq.nlargest(numberOfPoints, list(c_closeness.values()))
+    return  c_closeness
+
+def harmonicCentrality(graph, numberOfPoints) :
+    c_harmonic = nx.harmonic_centrality(graph)
+    c_harmonic = heapq.nlargest(numberOfPoints, list(c_harmonic.values()))
+    return c_harmonic
+
+def degreeCentrality(graph, numberOfPoints) :
+    c_degree = nx.degree_centrality(graph)
+    c_degree = heapq.nlargest(numberOfPoints, list(c_degree.values()))
+    return c_degree
+
+def chooseCentrality(graph, numberOfPoints, typePlot) :
+    if typePlot == 'kaltz' :
+        return kaltzCentrality(graph, numberOfPoints)
+    elif typePlot == 'betweenness' :
+        return betweennessCentrality(graph, numberOfPoints)
+    elif typePlot == 'closeness' :
+        return closenessCentrality(graph, numberOfPoints)
+    elif typePlot == 'harmonic' :
+        return harmonicCentrality(graph, numberOfPoints)
+    elif typePlot == 'degree' :
+        return degreeCentrality(graph, numberOfPoints) 
+    else :
+        raise KeyError()
