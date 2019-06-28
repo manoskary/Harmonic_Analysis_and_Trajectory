@@ -8,6 +8,7 @@ from scipy.spatial.distance import directed_hausdorff
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+from MelodyExtraction import *
 import os
 
 
@@ -194,7 +195,7 @@ def AllCompare(numberOfChorales, otherPiece) :
 	return result1, result2
 
 
-def CentralitiesScatterPlot(dictOfGraphs1, dictOfGraphs2, typePlot='Eigenvalues'):
+def CentralitiesScatterPlot(dictOfGraphs1, dictOfGraphs2, typePlot='Mix'):
 	points1 = []
 
 	fig = plt.figure()
@@ -281,3 +282,47 @@ def GetWorksByDirectory(directory):
 				print("--> Cannot build Trajectory for ", file)
 	return dictOfGraphs
 				
+
+def BachMelodyTonnetzSelect(number):
+	listOfBachPieces = dict()
+	for chorale in corpus.chorales.Iterator(1, number, returnType='filename'):
+	    file = corpus.parse(chorale)
+	    # Add the melody's corresponding Tonnetz
+	    listOfBachPieces[chorale] = analysisFromCorpus(file), melodyTonnetzCorpus(file)
+	return listOfBachPieces
+
+
+def BachTrajectoryGraphsWithMelodyTonnetz(number, type = 'NewTrajectory'):
+	listOfBachPieces = BachMelodyTonnetzSelect(number)
+	BachTrajectoryPoints = dict()
+	BachTrajectoryPointWeights = dict()
+	BachTrajectoryEdges = dict()
+	BachGraph = dict()
+	# melodygraphs
+	BachGraphT129 = dict()
+	BachGraphT138 = dict()
+
+	# In this definition we keep only the graph but feel free to output anything else as well
+	for key in listOfBachPieces :
+	    (chordList, Tonnetz), melodyTon = listOfBachPieces[key]
+	    firstPoint = PlaceFirstNote(chordList, Tonnetz)
+	    if type == 'NewTrajectory' :
+	    	trajectory = NewTrajectory(chordList, Tonnetz, firstPoint)
+	    else : 
+	    	trajectory = TrajectoryLookBefore(chordList, Tonnetz, firstPoint)
+	    Edges = TrajectoryNoteEdges(trajectory) + trajectory.connectingEdges
+	    
+	    setOfPoints, multiSetOfPoints = SetOfPoints(trajectory)
+	    
+	    BachTrajectoryPoints[key] = np.array(setOfPoints)
+	    BachTrajectoryPointWeights[key] = weightsOfTrajPoints(setOfPoints, multiSetOfPoints)
+	    BachTrajectoryEdges[key] = Edges
+
+	    #Separate the graphs based on their melody Tonnetz
+	    if melodyTon == [1, 2, 9] :
+	    	BachGraphT129[key] = CreateGraph(trajectory.chordPositions, Edges)
+	    else :
+	    	BachGraph[key] = CreateGraph(trajectory.chordPositions, Edges)
+
+	return BachGraphT129, BachGraph
+

@@ -9,12 +9,9 @@ def PC2Midi(listOfChords, directory) :
 	file = open(completeName, "w")
 	chordStream = stream.Stream()
 	for c in listOfChords :
-		try :
-			chordObject = chord.Chord(c)
-			chordObject.quarterLength = 1
-			chordStream.append(chordObject)
-		except :
-			pass
+		chordObject = chord.Chord(c)
+		chordObject.quarterLength = 1
+		chordStream.append(chordObject)
 	mf = midi.translate.streamToMidiFile(chordStream)
 	mf.open(completeName, 'wb')
 	mf.write()

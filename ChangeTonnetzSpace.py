@@ -28,4 +28,41 @@ def trajectoryToNewTonnetz(trajectory, newTonnetz) :
 		newlistOfChords.append(list(newchordDict.keys()))
 	return(newlistOfChords)
 
+def coordRot(value, rotation) : 
+	x, y = value
+	if rotation == 90 :
+		newvalue = (-y, x)
+	elif rotation == 180 :
+		newvalue = (-x, -y)
+	else :
+		newvalue = (y, -x)
+	return newvalue
+
+def noteRot(key, value, rotation, Tonnetz) :
+	x, y = coordRot(value, rotation)
+	newkey = getKeysByValue(Tonnetz, (abs(x%3), abs(y%4)))
+	return newkey
+
+
+
+def chordDictRot(chordDict, rotation, Tonnetz) :	
+	newchordDict = dict()
+	for key, value in chordDict.items() :
+		newkey = noteRot(key, value, rotation, Tonnetz)
+		newchordDict[newkey] = value
+	return newchordDict
+
+
+
+def trajectoryRot(trajectory, rotation=180) :
+	newlistOfChords = []
+	Tonnetz = TonnetzToString(trajectory.Tonnetz)
+	Tonnetz = dictOfTonnetz[Tonnetz]
+	for chordDict in trajectory.chordPositions :
+		newchordDict = chordDictRot(chordDict, rotation, Tonnetz)
+		newlistOfChords.append(list(newchordDict.keys()))
+	return(newlistOfChords)
+
+
+
 
