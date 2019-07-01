@@ -1,3 +1,11 @@
 pip3 install music21>= 5.5
 
-pip3 isntall jupyter>=4.4.0
+pip3 install jupyter>=4.4.0
+
+pip3 install networkx>=2.3
+
+pip3 install numpy>=1.16.3
+
+pip3 install matplotlib>=3.0.3
+
+pip3 install heapq_max>=0.21

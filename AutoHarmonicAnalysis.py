@@ -6,8 +6,6 @@ from music21 import converter, corpus, instrument, midi, note, chord, pitch
 from NetworkX_GraphTranslation import *
 from scipy.spatial.distance import directed_hausdorff
 import numpy as np
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 from MelodyExtraction import *
 import os
 
@@ -18,6 +16,7 @@ def BachTonnetzSelect(number):
 	    file = corpus.parse(chorale)
 	    listOfBachPieces[chorale] = analysisFromCorpus(file)
 	return listOfBachPieces
+
 
 def BachTrajectoryGraphs(number, type = 'NewTrajectory'):
 	listOfBachPieces = BachTonnetzSelect(number)
@@ -194,68 +193,6 @@ def AllCompare(numberOfChorales, otherPiece) :
 	result2 = versionComparisonOfTrajectoriesLookBeforeUnit(BachDict, otherPiece)
 	return result1, result2
 
-
-def CentralitiesScatterPlot(dictOfGraphs1, dictOfGraphs2, typePlot='Mix'):
-	points1 = []
-
-	fig = plt.figure()
-	ax = Axes3D(fig)
-
-	for key, graph in dictOfGraphs1.items():
-		point = CentralityPoint2D(graph, 3, typePlot) 
-		points1.append(point)
-
-	points2 = []
-	for key, graph in dictOfGraphs2.items():
-		point = CentralityPoint2D(graph, 3, typePlot)
-		points2.append(point)
-
-	x1, y1, z1 = zip(*points1)
-	x2, y2, z2 = zip(*points2)
-
-	ax.scatter(x1, y1, z1,  alpha=0.5, c='b', edgecolors='none', s=30)
-	ax.scatter(x2, y2, z2, alpha=0.5, c='r', edgecolors='none', s=30)
-
-	if typePlot == 'Mix' :
-		ax.set_xlabel('Eigen')
-		ax.set_ylabel('Harmonic')
-		ax.set_zlabel('Betweenness')
-	elif typePlot == 'Mix2' :
-		ax.set_xlabel('Eigen')
-		ax.set_ylabel('GlobalClustering')
-		ax.set_zlabel('Betweenness')
-	elif typePlot == 'Mix3' :
-		ax.set_xlabel('Eigenvalues')
-		ax.set_ylabel('GlobalClustering')
-		ax.set_zlabel('Harmonic')
-	else : 
-		ax.set_xlabel(typePlot)
-
-	plt.show()
-
-def plotCentrality(dictOfGraphs, numberOfPoints=3, typeOfCentrality='kaltz') :
-	fig = plt.figure()
-	ax = Axes3D(fig)
-
-	points = []
-
-	for graph in dictOfGraphs.values():
-		point = chooseCentrality(graph, numberOfPoints, typeOfCentrality)
-		points.append(point)
-
-	x, y, z = zip(*points)
-
-	ax.scatter(x, y, z,  alpha=0.5, c='b', edgecolors='none', s=30)
-
-	ax.set_xlabel(typeOfCentrality)
-
-
-def plotAllCentralities3D(dictOfGraphs):
-	centralities = ['kaltz', 'betweenness', 'closeness', 'harmonic', 'degree']
-	for centrality in centralities :
-		plotCentrality(dictOfGraphs, 3, centrality)
-
-
 def GetWorksByComposer(composerName):
 	listofWorks = ms.corpus.getComposer(composerName)
 	dictOfGraphs = dict()
@@ -283,46 +220,128 @@ def GetWorksByDirectory(directory):
 	return dictOfGraphs
 				
 
-def BachMelodyTonnetzSelect(number):
-	listOfBachPieces = dict()
-	for chorale in corpus.chorales.Iterator(1, number, returnType='filename'):
-	    file = corpus.parse(chorale)
-	    # Add the melody's corresponding Tonnetz
-	    listOfBachPieces[chorale] = analysisFromCorpus(file), melodyTonnetzCorpus(file)
-	return listOfBachPieces
+# def BachMelodyTonnetzSelect(number):
+# 	listOfBachPieces = dict()
+# 	for chorale in corpus.chorales.Iterator(1, number, returnType='filename'):
+# 	    file = corpus.parse(chorale)
+# 	    # Add the melody's corresponding Tonnetz
+# 	    listOfBachPieces[chorale] = analysisFromCorpus(file), melodyTonnetzCorpus(file)
+# 	return listOfBachPieces
 
 
-def BachTrajectoryGraphsWithMelodyTonnetz(number, type = 'NewTrajectory'):
-	listOfBachPieces = BachMelodyTonnetzSelect(number)
-	BachTrajectoryPoints = dict()
-	BachTrajectoryPointWeights = dict()
-	BachTrajectoryEdges = dict()
-	BachGraph = dict()
-	# melodygraphs
-	BachGraphT129 = dict()
-	BachGraphT138 = dict()
+# def BachTrajectoryGraphsWithMelodyTonnetz(number, type = 'NewTrajectory'):
+# 	listOfBachPieces = BachMelodyTonnetzSelect(number)
+# 	BachTrajectoryPoints = dict()
+# 	BachTrajectoryPointWeights = dict()
+# 	BachTrajectoryEdges = dict()
+# 	BachGraph = dict()
+# 	# melodygraphs
+# 	BachGraphT129 = dict()
+# 	BachGraphT138 = dict()
 
-	# In this definition we keep only the graph but feel free to output anything else as well
-	for key in listOfBachPieces :
-	    (chordList, Tonnetz), melodyTon = listOfBachPieces[key]
-	    firstPoint = PlaceFirstNote(chordList, Tonnetz)
-	    if type == 'NewTrajectory' :
-	    	trajectory = NewTrajectory(chordList, Tonnetz, firstPoint)
-	    else : 
-	    	trajectory = TrajectoryLookBefore(chordList, Tonnetz, firstPoint)
-	    Edges = TrajectoryNoteEdges(trajectory) + trajectory.connectingEdges
+# 	# In this definition we keep only the graph but feel free to output anything else as well
+# 	for key in listOfBachPieces :
+# 	    (chordList, Tonnetz), melodyTon = listOfBachPieces[key]
+# 	    firstPoint = PlaceFirstNote(chordList, Tonnetz)
+# 	    if type == 'NewTrajectory' :
+# 	    	trajectory = NewTrajectory(chordList, Tonnetz, firstPoint)
+# 	    else : 
+# 	    	trajectory = TrajectoryLookBefore(chordList, Tonnetz, firstPoint)
+# 	    Edges = TrajectoryNoteEdges(trajectory) + trajectory.connectingEdges
 	    
-	    setOfPoints, multiSetOfPoints = SetOfPoints(trajectory)
+# 	    setOfPoints, multiSetOfPoints = SetOfPoints(trajectory)
 	    
-	    BachTrajectoryPoints[key] = np.array(setOfPoints)
-	    BachTrajectoryPointWeights[key] = weightsOfTrajPoints(setOfPoints, multiSetOfPoints)
-	    BachTrajectoryEdges[key] = Edges
+# 	    BachTrajectoryPoints[key] = np.array(setOfPoints)
+# 	    BachTrajectoryPointWeights[key] = weightsOfTrajPoints(setOfPoints, multiSetOfPoints)
+# 	    BachTrajectoryEdges[key] = Edges
 
-	    #Separate the graphs based on their melody Tonnetz
-	    if melodyTon == [1, 2, 9] :
-	    	BachGraphT129[key] = CreateGraph(trajectory.chordPositions, Edges)
-	    else :
-	    	BachGraph[key] = CreateGraph(trajectory.chordPositions, Edges)
+# 	    #Separate the graphs based on their melody Tonnetz
+# 	    if melodyTon == [1, 2, 9] :
+# 	    	BachGraphT129[key] = CreateGraph(trajectory.chordPositions, Edges)
+# 	    else :
+# 	    	BachGraph[key] = CreateGraph(trajectory.chordPositions, Edges)
 
-	return BachGraphT129, BachGraph
+# 	return BachGraphT129, BachGraph
+
+
+
+# The point of the following functions is to find the pieces that deviate from the centralities distribution
+
+def getKeyByValue(dictOfElements, valueToFind):
+    listOfKeys = list()
+    for key, value in dictOfElements.items():
+        if value == valueToFind :
+            return key
+
+def getCentrCoord(dictOfGraphs) :
+	coordDict = dict()
+	for key, graph in dictOfGraphs.items():
+		point = CentralityPoint2D(graph, 3, 'Mix') 
+		coordDict[key] = point
+	return coordDict
+
+def meanPoint(coordDict) :
+	x, y, z = zip(*list(coordDict.values()))
+
+	mean = (float(format(sum(x)/len(coordDict), '.2f')), float(format(sum(y)/len(coordDict), '.2f')))
+	return mean
+
+def getOffPoints(coordDict) :
+	distanceDict = dict()
+	mean = meanPoint(coordDict)
+	for point in coordDict.values() :
+		sumofsquares = (point[0]-mean[0])**2 + (point[1]-mean[1])**2
+		distance = float(format(sumofsquares**(0.5), '.2f'))
+		distanceDict[point] = distance
+	maxdistance = max(list(distanceDict.values()))
+	offPoint = getKeyByValue(distanceDict, maxdistance)
+	offPiece = getKeysByValue(coordDict, offPoint)
+	return offPiece
+
+def getInPoint(coordDict) :
+	distanceDict = dict()
+	mean = meanPoint(coordDict)
+	for point in coordDict.values() :
+		sumofsquares = (point[0]-mean[0])**2 + (point[1]-mean[1])**2
+		distance = float(format(sumofsquares**(0.5), '.2f'))
+		distanceDict[point] = distance
+	maxdistance = min(list(distanceDict.values()))
+	offPoint = getKeyByValue(distanceDict, maxdistance)
+	offPiece = getKeysByValue(coordDict, offPoint)
+	return offPiece	
+
+
+def getPiecesOutOfDistribution(dictOfGraphs, edge='max') :
+	coordDict = getCentrCoord(dictOfGraphs)
+	if edge == 'max' :
+		piece = getOffPoints(coordDict)
+	else :
+		piece = getInPoint(coordDict)
+	try :
+		corpusPiece = piece[0] + '.xml'
+		s = ms.corpus.parse(corpusPiece)
+		s.show()
+	except :
+		print('Cannot show the score')
+	return piece
+
+
+
+
+def SortPiecesByDistances(dictOfGraphs) :
+	coordDict = getCentrCoord(dictOfGraphs)
+	distanceDict = dict()
+	mean = meanPoint(coordDict)
+	for point in coordDict.values() :
+		sumofsquares = (point[0]-mean[0])**2 + (point[1]-mean[1])**2
+		distance = float(format(sumofsquares**(0.5), '.2f'))
+		distanceDict[point] = distance
+	distance = list(distanceDict.values())
+	distance.sort()
+	print(distance)
+	for dist in distance :
+		point = getKeyByValue(distanceDict, dist)
+		piece = getKeysByValue(coordDict, point)
+		print(piece)
+	
 
