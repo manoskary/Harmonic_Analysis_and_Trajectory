@@ -4,7 +4,7 @@ from TrajectoryClass import *
 from FirstNotePosition import *
 from music21 import converter, corpus, instrument, midi, note, chord, pitch
 from NetworkX_GraphTranslation import *
-from scipy.spatial.distance import directed_hausdorff
+# from scipy.spatial.distance import directed_hausdorff
 import numpy as np
 from MelodyExtraction import *
 import os

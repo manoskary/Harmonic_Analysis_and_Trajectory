@@ -1,6 +1,7 @@
 import networkx as nx
 import numpy as np
 import matplotlib.pyplot as plt
+import heapq
 
 def CreateVertices(TrajectoryPoints, Graph) :
     setOfNodes = NodesSetCreate(TrajectoryPoints)
@@ -125,7 +126,7 @@ def CentralityPoint4D(graph):
     return point
 
 
-import heapq
+
 
 
 def CentralityPoint2D(graph, numberOfPoints, typePlot):
