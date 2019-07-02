@@ -2,6 +2,13 @@ import networkx as nx
 import numpy as np
 import matplotlib.pyplot as plt
 import heapq
+from itertools import product
+
+def getKeyByValue(dictOfElements, valueToFind):
+    listOfKeys = list()
+    for key, value in dictOfElements.items():
+        if value == valueToFind :
+            return key
 
 def CreateVertices(TrajectoryPoints, Graph) :
     setOfNodes = NodesSetCreate(TrajectoryPoints)
@@ -42,7 +49,9 @@ def CreateEdges(Nodes, Edges, Graph):
             Graph.add_edge(Nodes[edge[0]], Nodes[edge[1]], weight = weights[edge])
     return Graph
 
-def select_k(spectrum, minimum_energy = 0.7):
+# ------------- ALGORITHMS FOR GRAPH SIMILARITY ------------------- 
+
+def select_k(spectrum, minimum_energy = 0.9):
     running_total = 0.0
     total = sum(spectrum)
     if total == 0.0:
@@ -64,6 +73,17 @@ def CompareGraphsSpectrum(graph1, graph2) :
     #the similarity is the sum of the eukleidian distance of the most important nodes
     similarity = sum((laplacian1[:k] - laplacian2[:k])**2)
     return similarity
+
+def graphSimilarity(graphDict) :
+    similarityDict = dict()
+    for g1 in graphDict.values() :
+        for g2 in graphDict.values() :
+            if g1 != g2 :
+                key1 = getKeyByValue(graphDict, g1)
+                key2 = getKeyByValue(graphDict, g2)
+                if (key2, key1) not in similarityDict.keys() :
+                    similarityDict[(key1, key2)] = CompareGraphsSpectrum(g1, g2)
+    return sorted(similarityDict.items(), key=lambda kv: kv[1])
 
 
 def CreateGraph(Points, Edges):

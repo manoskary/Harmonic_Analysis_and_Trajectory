@@ -267,11 +267,7 @@ def GetWorksByDirectory(directory):
 
 # The point of the following functions is to find the pieces that deviate from the centralities distribution
 
-def getKeyByValue(dictOfElements, valueToFind):
-    listOfKeys = list()
-    for key, value in dictOfElements.items():
-        if value == valueToFind :
-            return key
+
 
 def getCentrCoord(dictOfGraphs) :
 	coordDict = dict()

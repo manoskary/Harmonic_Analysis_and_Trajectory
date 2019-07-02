@@ -12,7 +12,7 @@ def getCentrCoord(dictOfGraphs, typePlot) :
 		coordDict[key] = point
 	return zip(*points)
 
-def CentralitiesScatterPlot(dictOfGraphs1, dictOfGraphs2, dictOfGraphs3, typePlot='Mix'):
+def CentralitiesScatterPlot(dictOfGraphs1, dictOfGraphs2, dictOfGraphs3, typePlot='Mix', imageDirectory="Graphs", label1="first_input", label2="second_input", label3="third_input"):
 	
 	fig = plt.figure()
 	ax = fig.add_subplot(1, 1, 1, projection = '3d')
@@ -21,9 +21,9 @@ def CentralitiesScatterPlot(dictOfGraphs1, dictOfGraphs2, dictOfGraphs3, typePlo
 	x2, y2, z2 = getCentrCoord(dictOfGraphs2, typePlot)
 	x3, y3, z3 = getCentrCoord(dictOfGraphs3, typePlot)
 
-	ax.scatter(x1, y1, z1,  alpha=0.5, c='b', edgecolors='none', s=30, label='first input')
-	ax.scatter(x2, y2, z2, alpha=0.5, c='r', edgecolors='none', s=30, label='second input')
-	ax.scatter(x3, y3, z3, alpha=0.5, c='g', edgecolors='none', s=30, label='third input')
+	ax.scatter(x1, y1, z1,  alpha=0.5, c='b', edgecolors='none', s=30, label=label1)
+	ax.scatter(x2, y2, z2, alpha=0.5, c='r', edgecolors='none', s=30, label=label2)
+	ax.scatter(x3, y3, z3, alpha=0.5, c='g', edgecolors='none', s=30, label=label3)
 
 	if typePlot == 'Mix' :
 		ax.set_xlabel('Eigen')
@@ -32,9 +32,11 @@ def CentralitiesScatterPlot(dictOfGraphs1, dictOfGraphs2, dictOfGraphs3, typePlo
 	else : 
 		ax.set_xlabel(typePlot)
 
-	plt.title('3D plotting' + typePlot + 'method')
+	plt.title('3D plotting ' + typePlot + ' method')
 	plt.legend(loc=2)
-	plt.show()		
+	completeName = imageDirectory + "/" + label1 + "_" + label2 + "_" + label3 + "_" + typePlot + ".png"
+	fig.savefig(completeName)   # save the figure to file
+	plt.close(fig)	
 
 
 def Centralities2DPlot(dictOfGraphs1, dictOfGraphs2, dictOfGraphs3):
