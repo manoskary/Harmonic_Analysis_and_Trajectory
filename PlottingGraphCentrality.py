@@ -1,6 +1,7 @@
 from NetworkX_GraphTranslation import *
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import axes3d
+import os
 
 def getCentrCoord(dictOfGraphs, typePlot) :
 	points = []
@@ -14,8 +15,7 @@ def getCentrCoord(dictOfGraphs, typePlot) :
 def CentralitiesScatterPlot(dictOfGraphs1, dictOfGraphs2, dictOfGraphs3, typePlot='Mix'):
 	
 	fig = plt.figure()
-	ax = fig.add_subplot(1, 1, 1)
-	ax = fig.gca(projection='3d')
+	ax = fig.add_subplot(1, 1, 1, projection = '3d')
 
 	x1, y1, z1 = getCentrCoord(dictOfGraphs1, typePlot)
 	x2, y2, z2 = getCentrCoord(dictOfGraphs2, typePlot)
@@ -32,7 +32,7 @@ def CentralitiesScatterPlot(dictOfGraphs1, dictOfGraphs2, dictOfGraphs3, typePlo
 	else : 
 		ax.set_xlabel(typePlot)
 
-	plt.title('3D plotting')
+	plt.title('3D plotting' + typePlot + 'method')
 	plt.legend(loc=2)
 	plt.show()		
 
@@ -58,9 +58,10 @@ def Centralities2DPlot(dictOfGraphs1, dictOfGraphs2, dictOfGraphs3):
 	plt.show()
 
 
-def plotCentrality(dictOfGraphs, numberOfPoints=3, typeOfCentrality='kaltz') :
+def plotCentrality(dictOfGraphs, numberOfPoints=3, typeOfCentrality='kaltz', directory='Graphs', name='test', fileIndex=0 ) :
 	fig = plt.figure()
-	ax = Axes3D(fig)
+	ax = fig.add_subplot(1, 1, 1, projection='3d')
+	# ax = fig.gca(projection='3d')
 
 	points = []
 
@@ -74,10 +75,21 @@ def plotCentrality(dictOfGraphs, numberOfPoints=3, typeOfCentrality='kaltz') :
 
 	ax.set_xlabel(typeOfCentrality)
 
+	completeName = directory + "/" + name + str(fileIndex) + ".png"
+	fig.savefig(completeName)   # save the figure to file
+	plt.close(fig)
+
 
 def plotAllCentralities3D(dictOfGraphs):
 	centralities = ['kaltz', 'betweenness', 'closeness', 'harmonic', 'degree']
-	for centrality in centralities :
-		plotCentrality(dictOfGraphs, 3, centrality)
+	directory = input("Enter the directory of your files : ")
+	isDirectory = os.path.isdir(directory)
+	while not isDirectory :
+		directory = input("The directory wasn't valid enter another directory : ")
+		isDirectory = os.path.isdir(directory)
 
+	name = input("Enter the name of your files")
+	for centrality in centralities :
+		index = "_" + centrality + "_centrality"
+		plotCentrality(dictOfGraphs, 3, centrality, directory, name, index)
 

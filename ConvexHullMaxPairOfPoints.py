@@ -1,3 +1,10 @@
+# Copyright David Eppstein on Thu, 7 Mar 2002 (PSF Licence)
+
+# accessed on http://code.activestate.com/recipes/117225-convex-hull-and-diameter-of-2d-point-sets/
+
+
+
+
 from __future__ import generators
 
 def orientation(p,q,r):
