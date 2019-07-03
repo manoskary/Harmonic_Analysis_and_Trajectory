@@ -26,7 +26,7 @@ while not isDirectory :
 
 Composer = GetWorksByComposer(composer)
 Directory = GetWorksByDirectory(directory)
-Bach = BachTrajectoryGraphs(20)
+Bach = BachTrajectoryGraphs(200)
 
 CentralitiesScatterPlot(Bach, Directory, Composer, 'Mix', imageDirectory, "Bach", directorystyle, composer)
 CentralitiesScatterPlot(Bach, Directory, Composer, 'Mix2', imageDirectory, "Bach", directorystyle, composer)

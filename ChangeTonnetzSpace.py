@@ -28,21 +28,26 @@ def trajectoryToNewTonnetz(trajectory, newTonnetz) :
 		newlistOfChords.append(list(newchordDict.keys()))
 	return(newlistOfChords)
 
+
+# TODO fixed coordinates to equilateral triangles to rotate but didn't fix back coordinates.
 def coordRot(value, rotation) : 
 	x, y = value
+	x = x + 0.5*y
+	y = 0.87*y
 	if rotation == 90 :
-		newvalue = (-y, x)
+		newvalue = ( -y , x)
 	elif rotation == 180 :
 		newvalue = (-x, -y)
-	else :
+	elif rotation == 270:
 		newvalue = (y, -x)
+	else : 
+		newvalue =  (x, y)
 	return newvalue
 
 def noteRot(key, value, rotation, Tonnetz) :
 	x, y = coordRot(value, rotation)
-	newkey = getKeysByValue(Tonnetz, (abs(x%3), abs(y%4)))
+	newkey = getKeysByValue(Tonnetz, (x%3, y%4))
 	return newkey
-
 
 
 def chordDictRot(chordDict, rotation, Tonnetz) :	

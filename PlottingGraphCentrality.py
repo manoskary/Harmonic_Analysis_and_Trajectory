@@ -26,9 +26,21 @@ def CentralitiesScatterPlot(dictOfGraphs1, dictOfGraphs2, dictOfGraphs3, typePlo
 	ax.scatter(x3, y3, z3, alpha=0.5, c='g', edgecolors='none', s=30, label=label3)
 
 	if typePlot == 'Mix' :
-		ax.set_xlabel('Eigen')
+		ax.set_xlabel('Eigenvalues')
 		ax.set_ylabel('Harmonic')
 		ax.set_zlabel('Betweenness')
+	if typePlot == 'Mix2' :
+		ax.set_xlabel('Eigenvalues')
+		ax.set_ylabel('Glob.Clustering')
+		ax.set_zlabel('Betweenness')
+	if typePlot == 'Mix3' :
+		ax.set_xlabel('Eigenvalues')
+		ax.set_ylabel('Glob.Clustering')
+		ax.set_zlabel('Harmonic')
+	if typePlot == 'Mix4' :
+		ax.set_xlabel('Glob.Clustering')
+		ax.set_ylabel('Betweenness')
+		ax.set_zlabel('Harmonic')	
 	else : 
 		ax.set_xlabel(typePlot)
 

@@ -347,7 +347,7 @@ def twoDictsDistCompare(dictOfGraphs1, dictOfGraphs2) :
 		sumofsquares = (point[0]-mean2[0])**2 + (point[1]-mean2[1])**2
 		distance = float(format(sumofsquares**(0.5), '.2f'))
 		distanceDict1[point] = distance
-	maxdistance = max(list(distanceDict1.values()))
+	maxdistance = min(list(distanceDict1.values()))
 	offPoint = getKeyByValue(distanceDict1, maxdistance)
 	offPiece1 = getKeysByValue(coordDict1, offPoint)
 
@@ -356,7 +356,7 @@ def twoDictsDistCompare(dictOfGraphs1, dictOfGraphs2) :
 		sumofsquares = (point[0]-mean2[0])**2 + (point[1]-mean2[1])**2
 		distance = float(format(sumofsquares**(0.5), '.2f'))
 		distanceDict2[point] = distance
-	maxdistance = max(list(distanceDict2.values()))
+	maxdistance = min(list(distanceDict2.values()))
 	offPoint = getKeyByValue(distanceDict2, maxdistance)
 	offPiece2 = getKeysByValue(coordDict2, offPoint)
 
