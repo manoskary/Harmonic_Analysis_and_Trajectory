@@ -96,6 +96,14 @@ def GlobalClusteringCoefficient(graph):
     coef = np.mean(list(nx.clustering(graph).values()))
     return coef
 
+def ClusteringTransitivity(graph) :
+    transitivity = nx.transitivity(graph)
+    return transitivity
+
+def SquareClusteringCoefficient(graph):
+    coef = np.mean(list(nx.square_clustering(graph).values()))
+    return coef
+
 
 def PlotCentralities(graph):
 
@@ -183,7 +191,7 @@ def CentralityPoint2D(graph, numberOfPoints, typePlot):
     points['Mix'] = (max_eigenvector, max_harmonic, max_betweenness)
     points['Mix2'] = (max_eigenvector, glCoe, max_betweenness)
     points['Mix3'] = (max_eigenvector, glCoe, max_harmonic)
-    points['Mix4'] = (glCoe, max_betweenness, max_harmonic)
+    points['Mix4'] = (max_eigenvector, glCoe, SquareClusteringCoefficient(graph))
 
     return points[typePlot]
 
