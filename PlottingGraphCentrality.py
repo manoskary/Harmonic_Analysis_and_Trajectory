@@ -32,7 +32,7 @@ def CentralitiesScatterPlot(dictOfGraphs1, dictOfGraphs2, dictOfGraphs3, typePlo
 	if typePlot == 'Mix2' :
 		ax.set_xlabel('Eigenvalues')
 		ax.set_ylabel('Glob.Clustering')
-		ax.set_zlabel('Betweenness')
+		ax.set_zlabel('Closeness')
 	if typePlot == 'Mix3' :
 		ax.set_xlabel('Eigenvalues')
 		ax.set_ylabel('Glob.Clustering')

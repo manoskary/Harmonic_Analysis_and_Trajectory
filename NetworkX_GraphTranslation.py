@@ -189,7 +189,7 @@ def CentralityPoint2D(graph, numberOfPoints, typePlot):
     glCoe = GlobalClusteringCoefficient(graph)
 
     points['Mix'] = (max_eigenvector, max_harmonic, max_betweenness)
-    points['Mix2'] = (max_eigenvector, glCoe, max_betweenness)
+    points['Mix2'] = (max_eigenvector, glCoe, max_closeness)
     points['Mix3'] = (max_eigenvector, glCoe, max_harmonic)
     points['Mix4'] = (max_eigenvector, glCoe, SquareClusteringCoefficient(graph))
 

@@ -32,8 +32,8 @@ def trajectoryToNewTonnetz(trajectory, newTonnetz) :
 # TODO fixed coordinates to equilateral triangles to rotate but didn't fix back coordinates.
 def coordRot(value, rotation) : 
 	x, y = value
-	x = x + 0.5*y
-	y = 0.87*y
+	# x = x + 0.5*y
+	# y = 0.87*y
 	if rotation == 90 :
 		newvalue = ( -y , x)
 	elif rotation == 180 :
