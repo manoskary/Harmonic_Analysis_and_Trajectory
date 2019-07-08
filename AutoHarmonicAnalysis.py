@@ -4,10 +4,12 @@ from TrajectoryClass import *
 from FirstNotePosition import *
 from music21 import converter, corpus, instrument, midi, note, chord, pitch
 from NetworkX_GraphTranslation import *
-# from scipy.spatial.distance import directed_hausdorff
+from structural_functions import getKeyByValue
 import numpy as np
 from MelodyExtraction import *
 import os
+
+
 
 
 def BachTonnetzSelect(number):
@@ -54,15 +56,6 @@ def ComparingGraphs(DictOfGraphs):
             newKey = key1 + " vs " + key2
             GraphComparison[newKey] = CompareGraphsSpectrum(graph1, graph2)
     return GraphComparison
-
-
-def getKeysByValue(dictOfElements, valueToFind):
-    listOfKeys = list()
-    listOfItems = dictOfElements.items()
-    for item  in listOfItems:
-        if item[1] == valueToFind:
-            listOfKeys.append(item[0])
-    return  listOfKeys
 
 
 def open_midi(file_path, remove_drums=True):
@@ -121,8 +114,8 @@ def SpectralGraphCompare(dictOfGraphs):
 	graphComparison = ComparingGraphs(dictOfGraphs)
 	minimum = min(list(graphComparison.values()))
 	maximum = max(list(graphComparison.values()))
-	print(getKeysByValue(graphComparison, minimum), minimum)
-	print(getKeysByValue(graphComparison, maximum), maximum)
+	print(getKeyByValue(graphComparison, minimum), minimum)
+	print(getKeyByValue(graphComparison, maximum), maximum)
 	return graphComparison
 
 def ComparisonOfTrajectories(numberOfChorales, otherPiece) :
@@ -291,7 +284,7 @@ def getOffPoints(coordDict) :
 		distanceDict[point] = distance
 	maxdistance = max(list(distanceDict.values()))
 	offPoint = getKeyByValue(distanceDict, maxdistance)
-	offPiece = getKeysByValue(coordDict, offPoint)
+	offPiece = getKeyByValue(coordDict, offPoint)
 	return offPiece
 
 def getInPoint(coordDict) :
@@ -303,7 +296,7 @@ def getInPoint(coordDict) :
 		distanceDict[point] = distance
 	maxdistance = min(list(distanceDict.values()))
 	offPoint = getKeyByValue(distanceDict, maxdistance)
-	offPiece = getKeysByValue(coordDict, offPoint)
+	offPiece = getKeyByValue(coordDict, offPoint)
 	return offPiece	
 
 
@@ -334,7 +327,7 @@ def SortPiecesByDistances(dictOfGraphs) :
 	print(distance)
 	for dist in distance :
 		point = getKeyByValue(distanceDict, dist)
-		piece = getKeysByValue(coordDict, point)
+		piece = getKeyByValue(coordDict, point)
 		print(piece)
 	
 def twoDictsDistCompare(dictOfGraphs1, dictOfGraphs2) :
@@ -349,7 +342,7 @@ def twoDictsDistCompare(dictOfGraphs1, dictOfGraphs2) :
 		distanceDict1[point] = distance
 	maxdistance = min(list(distanceDict1.values()))
 	offPoint = getKeyByValue(distanceDict1, maxdistance)
-	offPiece1 = getKeysByValue(coordDict1, offPoint)
+	offPiece1 = getKeyByValue(coordDict1, offPoint)
 
 	distanceDict2 = dict()
 	for point in coordDict2.values() :
@@ -358,6 +351,6 @@ def twoDictsDistCompare(dictOfGraphs1, dictOfGraphs2) :
 		distanceDict2[point] = distance
 	maxdistance = min(list(distanceDict2.values()))
 	offPoint = getKeyByValue(distanceDict2, maxdistance)
-	offPiece2 = getKeysByValue(coordDict2, offPoint)
+	offPiece2 = getKeyByValue(coordDict2, offPoint)
 
 	return offPiece1, offPiece2

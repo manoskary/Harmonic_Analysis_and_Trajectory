@@ -3,12 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import heapq
 from itertools import product
-
-def getKeyByValue(dictOfElements, valueToFind):
-    listOfKeys = list()
-    for key, value in dictOfElements.items():
-        if value == valueToFind :
-            return key
+from structural_functions import getKeyByValue
 
 def CreateVertices(TrajectoryPoints, Graph) :
     setOfNodes = NodesSetCreate(TrajectoryPoints)

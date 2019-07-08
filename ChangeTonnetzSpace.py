@@ -1,15 +1,10 @@
 from FirstNotePosition import *
+from structural_functions import getKeyByValue
 
-
-def getKeysByValue(dictOfElements, valueToFind):
-    listOfKeys = list()
-    for key, value in dictOfElements.items():
-        if value == valueToFind :
-            return key
 
 def noteChange(key, value, newTonnetz) :
 	x, y = value
-	newkey = getKeysByValue(newTonnetz, (x%4, y%3))
+	newkey = getKeyByValue(newTonnetz, (x%4, y%3))
 	return newkey
 
 
