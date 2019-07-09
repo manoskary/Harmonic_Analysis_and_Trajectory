@@ -5,48 +5,55 @@ import heapq
 from itertools import product
 from structural_functions import getKeyByValue
 
-def CreateVertices(TrajectoryPoints, Graph) :
+
+def CreateVertices(TrajectoryPoints, Graph):
     setOfNodes = NodesSetCreate(TrajectoryPoints)
     nodes = dict()
-    for index, point in enumerate(setOfNodes) :
+    for index, point in enumerate(setOfNodes):
         Graph.add_node(index)
         nodes[point] = index
     return Graph, nodes
 
-def NodesSetCreate(TrajectoryPoints) :
+
+def NodesSetCreate(TrajectoryPoints):
     listOfNodes = []
-    for dictChord in TrajectoryPoints :
-        for node in dictChord.values() :
+    for dictChord in TrajectoryPoints:
+        for node in dictChord.values():
             listOfNodes.append(node)
     setOfNodes = list(set(listOfNodes))
     return setOfNodes
 
-def EdgesSetCreate(TrajectoryEdges) :
+
+def EdgesSetCreate(TrajectoryEdges):
     listOfEdges = []
-    for edgesList in TrajectoryEdges :
+    for edgesList in TrajectoryEdges:
         for edge in edgesList:
             listOfEdges.append(edge)
     setOfEdges = list(set(listOfEdges))
     return setOfEdges, listOfEdges
 
+
 def EdgeWeights(setOfEdges, multiSetOfEdges):
     weights = dict()
     for edge in setOfEdges:
         weights[edge] = multiSetOfEdges.count(edge)
-    edgeWeights = map((1 / max(list(weights.values()))), weights.values()) 
+    edgeWeights = map((1 / max(list(weights.values()))), weights.values())
     return weights
+
 
 def CreateEdges(Nodes, Edges, Graph):
     setOfEdges, multiSetOfEdges = EdgesSetCreate(Edges)
     weights = EdgeWeights(setOfEdges, multiSetOfEdges)
-    for edge in setOfEdges :
-        if (edge[0] in Nodes) and (edge[1] in Nodes): 
-            Graph.add_edge(Nodes[edge[0]], Nodes[edge[1]], weight = weights[edge])
+    for edge in setOfEdges:
+        if (edge[0] in Nodes) and (edge[1] in Nodes):
+            Graph.add_edge(Nodes[edge[0]], Nodes[edge[1]],
+                           weight=weights[edge])
     return Graph
 
-# ------------- ALGORITHMS FOR GRAPH SIMILARITY ------------------- 
+# ------------- ALGORITHMS FOR GRAPH SIMILARITY -------------------
 
-def select_k(spectrum, minimum_energy = 0.9):
+
+def select_k(spectrum, minimum_energy=0.9):
     running_total = 0.0
     total = sum(spectrum)
     if total == 0.0:
@@ -58,26 +65,30 @@ def select_k(spectrum, minimum_energy = 0.9):
             return i + 1
     return len(spectrum)
 
-def CompareGraphsSpectrum(graph1, graph2) :
+
+def CompareGraphsSpectrum(graph1, graph2):
     laplacian1 = nx.spectrum.laplacian_spectrum(graph1)
     laplacian2 = nx.spectrum.laplacian_spectrum(graph2)
     k1 = select_k(laplacian1)
     k2 = select_k(laplacian2)
-    #take the fewer dimensions to describe the result
+    # take the fewer dimensions to describe the result
     k = min(k1, k2)
-    #the similarity is the sum of the eukleidian distance of the most important nodes
+    # the similarity is the sum of the eukleidian distance of the most
+    # important nodes
     similarity = sum((laplacian1[:k] - laplacian2[:k])**2)
     return similarity
 
-def graphSimilarity(graphDict) :
+
+def graphSimilarity(graphDict):
     similarityDict = dict()
-    for g1 in graphDict.values() :
-        for g2 in graphDict.values() :
-            if g1 != g2 :
+    for g1 in graphDict.values():
+        for g2 in graphDict.values():
+            if g1 != g2:
                 key1 = getKeyByValue(graphDict, g1)
                 key2 = getKeyByValue(graphDict, g2)
-                if (key2, key1) not in similarityDict.keys() :
-                    similarityDict[(key1, key2)] = CompareGraphsSpectrum(g1, g2)
+                if (key2, key1) not in similarityDict.keys():
+                    similarityDict[(key1, key2)
+                                   ] = CompareGraphsSpectrum(g1, g2)
     return sorted(similarityDict.items(), key=lambda kv: kv[1])
 
 
@@ -87,13 +98,16 @@ def CreateGraph(Points, Edges):
     Graph = CreateEdges(Nodes, Edges, newG)
     return Graph
 
+
 def GlobalClusteringCoefficient(graph):
     coef = np.mean(list(nx.clustering(graph).values()))
     return coef
 
-def ClusteringTransitivity(graph) :
+
+def ClusteringTransitivity(graph):
     transitivity = nx.transitivity(graph)
     return transitivity
+
 
 def SquareClusteringCoefficient(graph):
     coef = np.mean(list(nx.square_clustering(graph).values()))
@@ -116,21 +130,42 @@ def PlotCentralities(graph):
 
     plt.figure(figsize=(18, 12))
     f, axarr = plt.subplots(2, 2, num=1)
-    plt.sca(axarr[0,0])
-    nx.draw(graph, cmap = plt.get_cmap('inferno'), node_color = c_degree, node_size=300, with_labels=True)
-    axarr[0,0].set_title('Degree Centrality', size=16)
+    plt.sca(axarr[0, 0])
+    nx.draw(
+        graph,
+        cmap=plt.get_cmap('inferno'),
+        node_color=c_degree,
+        node_size=300,
+        with_labels=True)
+    axarr[0, 0].set_title('Degree Centrality', size=16)
 
-    plt.sca(axarr[0,1])
-    nx.draw(graph, cmap = plt.get_cmap('inferno'), node_color = c_eigenvector, node_size=300, with_labels=True)
-    axarr[0,1].set_title('Eigenvalue Centrality (Katz)', size=16)
+    plt.sca(axarr[0, 1])
+    nx.draw(
+        graph,
+        cmap=plt.get_cmap('inferno'),
+        node_color=c_eigenvector,
+        node_size=300,
+        with_labels=True)
+    axarr[0, 1].set_title('Eigenvalue Centrality (Katz)', size=16)
 
-    plt.sca(axarr[1,0])
-    nx.draw(graph, cmap = plt.get_cmap('inferno'), node_color = c_harmonic, node_size=300, with_labels=True)
-    axarr[1,0].set_title('harmonic_centrality Centrality', size=16)
+    plt.sca(axarr[1, 0])
+    nx.draw(
+        graph,
+        cmap=plt.get_cmap('inferno'),
+        node_color=c_harmonic,
+        node_size=300,
+        with_labels=True)
+    axarr[1, 0].set_title('harmonic_centrality Centrality', size=16)
 
-    plt.sca(axarr[1,1])
-    nx.draw(graph, cmap = plt.get_cmap('inferno'), node_color = c_betweenness, node_size=300, with_labels=True)
-    axarr[1,1].set_title('Betweenness Centrality', size=16)
+    plt.sca(axarr[1, 1])
+    nx.draw(
+        graph,
+        cmap=plt.get_cmap('inferno'),
+        node_color=c_betweenness,
+        node_size=300,
+        with_labels=True)
+    axarr[1, 1].set_title('Betweenness Centrality', size=16)
+
 
 def CentralityPoint4D(graph):
     c_degree = nx.degree_centrality(graph)
@@ -149,20 +184,21 @@ def CentralityPoint4D(graph):
     return point
 
 
-
-
-
 def CentralityPoint2D(graph, numberOfPoints, typePlot):
 
-    points = dict()    
+    points = dict()
 
     c_eigenvector = nx.katz_centrality(graph)
-    c_eigenvector = heapq.nlargest(numberOfPoints, list(c_eigenvector.values()))
+    c_eigenvector = heapq.nlargest(
+        numberOfPoints, list(
+            c_eigenvector.values()))
     max_eigenvector = max(c_eigenvector)
     points['Eigenvalues'] = c_eigenvector
 
     c_betweenness = nx.betweenness_centrality(graph)
-    c_betweenness = heapq.nlargest(numberOfPoints, list(c_betweenness.values()))
+    c_betweenness = heapq.nlargest(
+        numberOfPoints, list(
+            c_betweenness.values()))
     max_betweenness = max(c_betweenness)
     points['Betweenness'] = c_betweenness
 
@@ -186,45 +222,58 @@ def CentralityPoint2D(graph, numberOfPoints, typePlot):
     points['Mix'] = (max_eigenvector, max_harmonic, max_betweenness)
     points['Mix2'] = (max_eigenvector, glCoe, max_closeness)
     points['Mix3'] = (max_eigenvector, glCoe, max_harmonic)
-    points['Mix4'] = (max_eigenvector, glCoe, SquareClusteringCoefficient(graph))
+    points['Mix4'] = (
+        max_eigenvector,
+        glCoe,
+        SquareClusteringCoefficient(graph))
 
     return points[typePlot]
 
+
 def kaltzCentrality(graph, numberOfPoints):
     c_eigenvector = nx.katz_centrality(graph)
-    c_eigenvector = heapq.nlargest(numberOfPoints, list(c_eigenvector.values()))
+    c_eigenvector = heapq.nlargest(
+        numberOfPoints, list(
+            c_eigenvector.values()))
     return c_eigenvector
 
-def betweennessCentrality(graph, numberOfPoints) :   
+
+def betweennessCentrality(graph, numberOfPoints):
     c_betweenness = nx.betweenness_centrality(graph)
-    c_betweenness = heapq.nlargest(numberOfPoints, list(c_betweenness.values()))
+    c_betweenness = heapq.nlargest(
+        numberOfPoints, list(
+            c_betweenness.values()))
     return c_betweenness
 
-def closenessCentrality(graph, numberOfPoints) :
+
+def closenessCentrality(graph, numberOfPoints):
     c_closeness = nx.closeness_centrality(graph)
     c_closeness = heapq.nlargest(numberOfPoints, list(c_closeness.values()))
-    return  c_closeness
+    return c_closeness
 
-def harmonicCentrality(graph, numberOfPoints) :
+
+def harmonicCentrality(graph, numberOfPoints):
     c_harmonic = nx.harmonic_centrality(graph)
     c_harmonic = heapq.nlargest(numberOfPoints, list(c_harmonic.values()))
     return c_harmonic
 
-def degreeCentrality(graph, numberOfPoints) :
+
+def degreeCentrality(graph, numberOfPoints):
     c_degree = nx.degree_centrality(graph)
     c_degree = heapq.nlargest(numberOfPoints, list(c_degree.values()))
     return c_degree
 
-def chooseCentrality(graph, numberOfPoints, typePlot) :
-    if typePlot == 'kaltz' :
+
+def chooseCentrality(graph, numberOfPoints, typePlot):
+    if typePlot == 'kaltz':
         return kaltzCentrality(graph, numberOfPoints)
-    elif typePlot == 'betweenness' :
+    elif typePlot == 'betweenness':
         return betweennessCentrality(graph, numberOfPoints)
-    elif typePlot == 'closeness' :
+    elif typePlot == 'closeness':
         return closenessCentrality(graph, numberOfPoints)
-    elif typePlot == 'harmonic' :
+    elif typePlot == 'harmonic':
         return harmonicCentrality(graph, numberOfPoints)
-    elif typePlot == 'degree' :
-        return degreeCentrality(graph, numberOfPoints) 
-    else :
+    elif typePlot == 'degree':
+        return degreeCentrality(graph, numberOfPoints)
+    else:
         raise KeyError()

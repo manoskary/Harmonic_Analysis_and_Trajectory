@@ -27,6 +27,7 @@ def get_closest_value(arr, target):
     else:
         return find_closest(arr[mid], arr[mid + 1], target)
 
+
 def find_closest(val1, val2, target):
     return val2 if target - val1 >= val2 - target else val1
 
@@ -34,5 +35,5 @@ def find_closest(val1, val2, target):
 def getKeyByValue(dictOfElements, valueToFind):
     listOfKeys = list()
     for key, value in dictOfElements.items():
-        if value == valueToFind :
+        if value == valueToFind:
             return key
