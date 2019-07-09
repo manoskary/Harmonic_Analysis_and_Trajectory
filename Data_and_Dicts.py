@@ -1,12 +1,12 @@
 labels = {
-    'bach' : [1, 2, 3],
-    'palestrina' : [1, 2, 3],
-    'beethonven' : [1, 2, 3],
-    'mozart' : [1, 2, 3],
-    'monteverdi' : [1, 2, 3],
-    'schumann' : [1, 2, 3],
-    'chopin' : [1, 2, 3],
-    'jazz' : [1, 2, 3]
+    'bach' : [1, 1, 1],
+    'palestrina' : [2, 2, 2],
+    'beethonven' : [3, 3, 3],
+    'mozart' : [4, 4, 4],
+    'monteverdi' : [5, 5, 5],
+    'schumann' : [6, 6, 6],
+    'chopin' : [7, 7, 7],
+    'jazz' : [8, 8, 8]
 }
 
 
