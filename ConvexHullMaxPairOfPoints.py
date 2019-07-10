@@ -1,6 +1,6 @@
 # Copyright David Eppstein on Thu, 7 Mar 2002 (PSF Licence)
 
-# accessed on
+# accessed on 20/05/2019
 # http://code.activestate.com/recipes/117225-convex-hull-and-diameter-of-2d-point-sets/
 
 
@@ -8,12 +8,12 @@ from __future__ import generators
 
 
 def orientation(p, q, r):
-    '''Return positive if p-q-r are clockwise, neg if ccw, zero if colinear.'''
+    # Return positive if p-q-r are clockwise, neg if ccw, zero if colinear.
     return (q[1] - p[1]) * (r[0] - p[0]) - (q[0] - p[0]) * (r[1] - p[1])
 
 
 def hulls(Points):
-    '''Graham scan to find upper and lower convex hulls of a set of 2d points.'''
+    # Graham scan to find upper and lower convex hulls of a set of 2d points.
     U = []
     L = []
     Points.sort()
@@ -28,9 +28,7 @@ def hulls(Points):
 
 
 def rotatingCalipers(Points):
-    '''Given a list of 2d points, finds all ways of sandwiching the points
-between two parallel lines that touch one point each, and yields the sequence
-of pairs of points touched by each pair of lines.'''
+    ### Given a list of 2d points, finds all ways of sandwiching the points between two parallel lines that touch one point each, and yields the sequence of pairs of points touched by each pair of lines.
     U, L = hulls(Points)
     i = 0
     j = len(L) - 1
@@ -53,7 +51,7 @@ of pairs of points touched by each pair of lines.'''
 
 
 def diameter(Points):
-    '''Given a list of 2d points, returns the pair that's farthest apart.'''
+    # Given a list of 2d points, returns the pair that's farthest apart.
     diam, pair = max([((p[0] - q[0])**2 + (p[1] - q[1])**2, (p, q))
                       for p, q in rotatingCalipers(Points)])
     return pair

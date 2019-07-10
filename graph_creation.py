@@ -1,5 +1,5 @@
 from itertools import product
-from GraphClass import *
+from GraphClass import GraphClass
 
 
 def TrajectoryNoteEdges(trajectory):
@@ -7,8 +7,8 @@ def TrajectoryNoteEdges(trajectory):
     dist = [-1, 0, 1]
     for dicts in trajectory.chordPositions:
         chordEdges = []
-        l = list(product(dicts.values(), dicts.values()))
-        for couple in l:
+        cartl = list(product(dicts.values(), dicts.values()))
+        for couple in cartl:
             (x1, y1), (x2, y2) = couple
             if (x1 - x2) in dist and (y1 - y2) in dist:
                 if not (((x1 - x2) == 1 and (y1 - y2) == -1)
@@ -16,6 +16,7 @@ def TrajectoryNoteEdges(trajectory):
                     chordEdges.append(couple)
         TotalEdges.append(chordEdges)
     return TotalEdges
+
 
 def CreateVertices(graph):
     setOfNodes = NodesSetCreate(graph)
@@ -25,9 +26,10 @@ def CreateVertices(graph):
         nodes[point] = index
     return nodes
 
+
 def NodesSetCreate(graph):
     listOfNodes = []
-    for dictChord in graph.trajectory.chordPositions :
+    for dictChord in graph.trajectory.chordPositions:
         for node in dictChord.values():
             listOfNodes.append(node)
     setOfNodes = list(set(listOfNodes))
@@ -47,7 +49,8 @@ def EdgeWeights(setOfEdges, multiSetOfEdges):
     weights = dict()
     for edge in setOfEdges:
         weights[edge] = multiSetOfEdges.count(edge)
-    edgeWeights = map((1 / max(list(weights.values()))), weights.values())
+    # Use the following to normalize edge weights
+    # edgeWeights = map((1 / max(list(weights.values()))), weights.values())
     return weights
 
 
@@ -58,6 +61,7 @@ def CreateEdges(graph, Nodes, Edges):
         if (edge[0] in Nodes) and (edge[1] in Nodes):
             graph.addEdge(edge, weights[edge])
 
+
 def CreateGraph(trajectory):
     graph = GraphClass(trajectory)
     edges = TrajectoryNoteEdges(trajectory)
@@ -65,3 +69,4 @@ def CreateGraph(trajectory):
     CreateEdges(graph, nodes, edges)
     graph.addCentralities()
     return graph
+    

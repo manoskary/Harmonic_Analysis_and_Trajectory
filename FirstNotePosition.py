@@ -1,4 +1,4 @@
-from Data_and_Dicts import *
+from Data_and_Dicts import NotePointsT129, NotePointsT138, NotePointsT147, NotePointsT237, NotePointsT345
 
 
 def TonnetzToString(Tonnetz):

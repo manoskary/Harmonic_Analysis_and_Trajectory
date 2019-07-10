@@ -1,5 +1,6 @@
-from AutoHarmonicAnalysis import BachTrajectoryGraphs, GetWorksByComposer, GetWorksByDirectory, getPiecesOutOfDistribution, twoDictsDistCompare, SortPiecesByDistances
-from PlottingGraphCentrality import CentralitiesScatterPlot, Centralities2DPlot
+from AutoHarmonicAnalysis import BachTrajectoryGraphs, GetWorksByComposer, GetWorksByDirectory
+from AutoHarmonicAnalysis import getPiecesOutOfDistribution, twoDictsDistCompare, SortPiecesByDistances
+from PlottingGraphCentrality import CentralitiesScatterPlot
 import os
 from music21 import corpus
 

@@ -1,4 +1,4 @@
-from FirstNotePosition import *
+from FirstNotePosition import dictOfTonnetz, TonnetzToString
 from structural_functions import getKeyByValue
 
 
@@ -44,7 +44,7 @@ def coordRot(value, rotation):
 
 def noteRot(key, value, rotation, Tonnetz):
     x, y = coordRot(value, rotation)
-    newkey = getKeysByValue(Tonnetz, (x % 3, y % 4))
+    newkey = getKeyByValue(Tonnetz, (x % 3, y % 4))
     return newkey
 
 

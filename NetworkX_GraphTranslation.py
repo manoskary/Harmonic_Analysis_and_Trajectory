@@ -2,7 +2,6 @@ import networkx as nx
 import numpy as np
 import matplotlib.pyplot as plt
 import heapq
-from itertools import product
 from structural_functions import getKeyByValue
 
 
@@ -37,7 +36,8 @@ def EdgeWeights(setOfEdges, multiSetOfEdges):
     weights = dict()
     for edge in setOfEdges:
         weights[edge] = multiSetOfEdges.count(edge)
-    edgeWeights = map((1 / max(list(weights.values()))), weights.values())
+    # a way to normalize edge weights
+    # edgeWeights = map((1 / max(list(weights.values()))), weights.values())
     return weights
 
 
@@ -211,11 +211,6 @@ def CentralityPoint2D(graph, numberOfPoints, typePlot):
     c_harmonic = heapq.nlargest(numberOfPoints, list(c_harmonic.values()))
     max_harmonic = max(c_harmonic)
     points['Harmonic'] = c_harmonic
-
-    c_degree = nx.degree_centrality(graph)
-    c_degree = heapq.nlargest(numberOfPoints, list(c_degree.values()))
-    max_degree = max(c_degree)
-    points['Degree'] = c_degree
 
     glCoe = GlobalClusteringCoefficient(graph)
 

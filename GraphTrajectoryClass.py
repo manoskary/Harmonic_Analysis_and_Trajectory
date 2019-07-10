@@ -1,15 +1,17 @@
 import networkx as nx
 
 
-
 class GraphTrajectoryClass:
+
     def __init__(self, graph):
         self.trajectory = graph.trajectory
         self.graph = graph.graph
 
 
 
+
 class GraphClass:
+
     def __init__(self, graph):
         self.graph = graph
         self.kaltz_coef = max(list(nx.katz_centrality(self.graph).values()))
@@ -20,3 +22,4 @@ class GraphClass:
         self.betweenness_coef = max(
             list(nx.betweenness_centrality(self.graph).values()))
         self.closeness_coef = max(list(nx.closeness_centrality(self.graph).values()))
+

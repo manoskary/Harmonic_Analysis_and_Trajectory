@@ -1,7 +1,9 @@
 from networkx import nx
 from numpy import mean
 
+
 class GraphClass:
+
     def __init__(self, trajectory):
         self.trajectory = trajectory
         self.vertices = []
@@ -30,14 +32,15 @@ class GraphClass:
             list(nx.betweenness_centrality(self.graph).values()))
         self.closeness_coef = max(list(nx.closeness_centrality(self.graph).values()))
 
-    def addName(self, name) :
+    def addName(self, name):
         self.name = name
 
-    def addStyle(self, style_label) :
+    def addStyle(self, style_label):
         self.style = style_label
 
-    def addHarmonyStyle(self, harmony_label) :
+    def addHarmonyStyle(self, harmony_label):
         self.harmony_style = harmony_label
 
-    def addComposer(self, name) :
+    def addComposer(self, name):
         self.name = name
+

@@ -1,6 +1,6 @@
 import itertools as itt
 import ConvexHullMaxPairOfPoints as convHull
-from TrajectoryClass import *
+from TrajectoryClass import TrajectoryClass
 
 
 INVALID_POS = (104, 104)
@@ -40,7 +40,6 @@ def intervalToPoint(num, axes, T_axes):
 
 
 def ChordConfiguration(chord, axes, Tonnetz):
-    chordEdges = []
     if not isValidPos(axes):
         print(chord, axes)
         raise ValueError("Bad reference point")
@@ -371,8 +370,8 @@ def TrajectoryNoteEdges(trajectory):
     dist = [-1, 0, 1]
     for dicts in trajectory.chordPositions:
         chordEdges = []
-        l = list(itt.product(dicts.values(), dicts.values()))
-        for couple in l:
+        cartl = list(itt.product(dicts.values(), dicts.values()))
+        for couple in cartl:
             (x1, y1), (x2, y2) = couple
             if (x1 - x2) in dist and (y1 - y2) in dist:
                 if not (((x1 - x2) == 1 and (y1 - y2) == -1)

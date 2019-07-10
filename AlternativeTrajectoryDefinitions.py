@@ -1,4 +1,4 @@
-from TrajectoryCalculationsWithClass import *
+from TrajectoryCalculationsWithClass import NewTrajectory, TrajectoryLookBefore
 
 
 def sequencing(listOfLists, seqLen=3):

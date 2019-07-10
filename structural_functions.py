@@ -33,11 +33,13 @@ def find_closest(val1, val2, target):
 
 
 def getKeyByValue(dictOfElements, valueToFind):
-    listOfKeys = list()
     for key, value in dictOfElements.items():
         if value == valueToFind:
             return key
 
+
 def mergeDicts(dict1, dict2):
     res = {**dict1, **dict2}
     return res
+
+    

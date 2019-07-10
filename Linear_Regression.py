@@ -1,8 +1,6 @@
 import numpy as np
 from sklearn.linear_model import LinearRegression
 from structural_functions import get_closest_value, getKeyByValue
-from Data_and_Dicts import labels
-
 from NetworkX_GraphTranslation import CentralityPoint2D as cepo
 from AutoHarmonicAnalysis import GraphOfNewPiece
 # Don't forget that points should be in the form of an array, that is :

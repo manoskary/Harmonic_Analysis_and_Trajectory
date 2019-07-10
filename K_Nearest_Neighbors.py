@@ -1,10 +1,6 @@
 import numpy as np
 from sklearn.neighbors import KNeighborsClassifier
-from structural_functions import getKeyByValue
-from NetworkX_GraphTranslation import CentralityPoint2D as cepo
-from AutoHarmonicAnalysis import GraphOfNewPiece
 from sklearn import preprocessing
-from Data_and_Dicts import labels
 
 
 # Don't forget that points should be in the form of an array, that is :
