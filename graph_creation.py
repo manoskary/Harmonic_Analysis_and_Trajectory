@@ -69,4 +69,3 @@ def CreateGraph(trajectory):
     CreateEdges(graph, nodes, edges)
     graph.addCentralities()
     return graph
-    

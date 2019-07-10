@@ -4,12 +4,15 @@ A Notebook repository for Automated Harmonic Analysis of symbolic music data fil
 Python Jupyter-Notebook modules :
 
   Dependencies Python Packages:
-    - music21
-    - networkx
-    - matplotlib
-    - scipy
-    - numpy
-    - jupyter
-    - heapq_max
+    * music21
+    * networkx
+    * matplotlib
+    * scipy
+    * numpy
+    * jupyter
+    * heapq_max
+    * scikit-learn
+    * pandas
 
-# Install dependencies with sudo pip install -r requirements.txt (use pip for python 2 & pip3 for python 3)
+## Install dependencies with sudo pip install -r requirements.txt (use pip for python 2 & pip3 for python 3)
+
