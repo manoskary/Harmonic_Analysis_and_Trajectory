@@ -37,3 +37,7 @@ def getKeyByValue(dictOfElements, valueToFind):
     for key, value in dictOfElements.items():
         if value == valueToFind:
             return key
+
+def mergeDicts(dict1, dict2):
+    res = {**dict1, **dict2}
+    return res

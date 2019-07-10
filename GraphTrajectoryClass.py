@@ -1,16 +1,22 @@
-from networkx import algorithms
-from numpy import mean
+import networkx as nx
+
 
 
 class GraphTrajectoryClass:
-    def __init__(self, graph, trajectory):
+    def __init__(self, graph):
+        self.trajectory = graph.trajectory
+        self.graph = graph.graph
+
+
+
+class GraphClass:
+    def __init__(self, graph):
         self.graph = graph
-        self.trajectory = trajectory
-        self.kaltz_coef = max(list(kaltz_centrality(graph).values()))
-        self.glob_clust_coef = np.mean(list(clustering(graph).values()))
-        self.square_clustering = np.mean(
-            list(square_clustering(graph).values()))
-        self.harmonic_coef = max(list(harmonic_centrality(graph).values()))
+        self.kaltz_coef = max(list(nx.katz_centrality(self.graph).values()))
+        self.glob_clust_coef = mean(list(nx.clustering(self.graph).values()))
+        self.square_clustering_coef = mean(
+            list(nx.square_clustering(self.graph).values()))
+        self.harmonic_coef = max(list(nx.harmonic_centrality(self.graph).values()))
         self.betweenness_coef = max(
-            list(betweenness_centrality(graph).values()))
-        self.closeness_coef = max(list(closeness_centrality(graph).values()))
+            list(nx.betweenness_centrality(self.graph).values()))
+        self.closeness_coef = max(list(nx.closeness_centrality(self.graph).values()))

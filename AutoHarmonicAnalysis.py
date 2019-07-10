@@ -4,10 +4,10 @@ from TrajectoryClass import *
 from FirstNotePosition import *
 from music21 import converter, corpus, instrument, midi, note, chord, pitch
 from NetworkX_GraphTranslation import *
-from structural_functions import getKeyByValue
+from structural_functions import getKeyByValue, mergeDicts
 import numpy as np
 from MelodyExtraction import *
-import os
+from itertools import islice
 
 
 def BachTonnetzSelect(number):
@@ -98,14 +98,9 @@ def GraphOfNewPiece(newPiece, directory):
             setOfPoints, multiSetOfPoints)
         TrajectoryEdges[newPiece] = Edges
         Graph[newPiece] = CreateGraph(trajectory.chordPositions, Edges)
-    return(Graph)
+    return Graph
 
 # ---------------------------------------- GRAPH COMPARISON TECHNIQUES ADA
-
-
-def Merge(dict1, dict2):
-    res = {**dict1, **dict2}
-    return res
 
 
 def GlobalClustering(dictOfGraphs):
@@ -130,7 +125,7 @@ def ComparisonOfTrajectories(numberOfChorales, otherPiece):
     BachGraph = BachTrajectoryGraphs(BachDict)
     graphOfNewPiece = GraphOfNewPiece(otherPiece)
     # Compare the graphs
-    newDictOfGraphs = Merge(BachGraph, graphOfNewPiece)
+    newDictOfGraphs = mergeDicts(BachGraph, graphOfNewPiece)
 
     spectralGraphCompare = SpectralGraphCompare(newDictOfGraphs)
     globalClusteringCoef = GlobalClustering(newDictOfGraphs)
@@ -145,7 +140,7 @@ def ComparisonOfTrajectoriesLookBefore(numberOfChorales, otherPiece):
     BachGraph = BachTrajectoryLookBeforeGraphs(BachDict)
     graphOfNewPiece = GraphOfNewPieceLookBefore(otherPiece)
     # Compare the graphs
-    newDictOfGraphs = Merge(BachGraph, graphOfNewPiece)
+    newDictOfGraphs = mergeDicts(BachGraph, graphOfNewPiece)
 
     spectralGraphCompare = SpectralGraphCompare(newDictOfGraphs)
     globalClusteringCoef = GlobalClustering(newDictOfGraphs)
@@ -162,7 +157,7 @@ def ComparisonOfTrajectoriesUnit(BachDict, otherPiece):
     BachGraph = BachTrajectoryGraphs(BachDict)
     graphOfNewPiece = GraphOfNewPiece(otherPiece)
     # Compare the graphs
-    newDictOfGraphs = Merge(BachGraph, graphOfNewPiece)
+    newDictOfGraphs = mergeDicts(BachGraph, graphOfNewPiece)
 
     spectralGraphCompare = SpectralGraphCompare(newDictOfGraphs)
     globalClusteringCoef = GlobalClustering(newDictOfGraphs)
@@ -176,7 +171,7 @@ def ComparisonOfTrajectoriesLookBeforeUnit(BachDict, otherPiece):
     BachGraph = BachTrajectoryLookBeforeGraphs(BachDict)
     graphOfNewPiece = GraphOfNewPieceLookBefore(otherPiece)
     # Compare the graphs
-    newDictOfGraphs = Merge(BachGraph, graphOfNewPiece)
+    newDictOfGraphs = mergeDicts(BachGraph, graphOfNewPiece)
 
     spectralGraphCompare = SpectralGraphCompare(newDictOfGraphs)
     globalClusteringCoef = GlobalClustering(newDictOfGraphs)
@@ -195,13 +190,15 @@ def AllCompare(numberOfChorales, otherPiece):
 
 def GetWorksByComposer(composerName):
     listofWorks = ms.corpus.getComposer(composerName)
+    if len(listofWorks) > 150 :
+        listofWorks = list(islice(listofWorks, 150))
     dictOfGraphs = dict()
     if len(listofWorks) > 0:
         for piece in listofWorks:
             try:
                 print("Building Trajectory for ", piece)
                 graph = GraphOfNewPiece(piece, 'corpus')
-                dictOfGraphs = Merge(dictOfGraphs, graph)
+                dictOfGraphs = mergeDicts(dictOfGraphs, graph)
             except BaseException:
                 print("--> Cannot build Trajectory for ", piece)
     return dictOfGraphs
@@ -215,7 +212,7 @@ def GetWorksByDirectory(directory):
             try:
                 print("Building Trajectory for ", file)
                 graph = GraphOfNewPiece(file, directory)
-                dictOfGraphs = Merge(dictOfGraphs, graph)
+                dictOfGraphs = mergeDicts(dictOfGraphs, graph)
             except BaseException:
                 print("--> Cannot build Trajectory for ", file)
     return dictOfGraphs

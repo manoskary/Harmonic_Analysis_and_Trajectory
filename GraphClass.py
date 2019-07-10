@@ -1,52 +1,43 @@
-import networkx as nx
-
-
-def CreateVertices(TrajectoryPoints, Graph):
-    setOfNodes = NodesSetCreate(TrajectoryPoints)
-    nodes = dict()
-    for index, point in enumerate(setOfNodes):
-        Graph.add_node(index)
-        nodes[point] = index
-    return Graph, nodes
-
-
-def NodesSetCreate(TrajectoryPoints):
-    listOfNodes = []
-    for dictChord in TrajectoryPoints:
-        for node in dictChord.values():
-            listOfNodes.append(node)
-    setOfNodes = list(set(listOfNodes))
-    return setOfNodes
-
-
-def EdgesSetCreate(TrajectoryEdges):
-    listOfEdges = []
-    for edgesList in TrajectoryEdges:
-        for edge in edgesList:
-            listOfEdges.append(edge)
-    setOfEdges = list(set(listOfEdges))
-    return setOfEdges, listOfEdges
-
-
-def EdgeWeights(setOfEdges, multiSetOfEdges):
-    weights = dict()
-    for edge in setOfEdges:
-        weights[edge] = multiSetOfEdges.count(edge)
-    edgeWeights = map((1 / max(list(weights.values()))), weights.values())
-    return weights
-
-
-def CreateEdges(Nodes, Edges, Graph):
-    setOfEdges, multiSetOfEdges = EdgesSetCreate(Edges)
-    weights = EdgeWeights(setOfEdges, multiSetOfEdges)
-    for edge in setOfEdges:
-        if (edge[0] in Nodes) and (edge[1] in Nodes):
-            Graph.add_edge(Nodes[edge[0]], Nodes[edge[1]],
-                           weight=weights[edge])
-    return Graph
-
+from networkx import nx
+from numpy import mean
 
 class GraphClass:
     def __init__(self, trajectory):
+        self.trajectory = trajectory
+        self.vertices = []
+        self.edges = []
         self.graph = nx.Graph()
-        self.vertices = NodesSetCreate(trajectory.chordPositions)
+        self.name = None
+        self.style = None
+        self.composer = None
+        self.harmony = None
+
+    def addVertex(self, index, point):
+        self.vertices.append(point)
+        self.graph.add_node(index)
+
+    def addEdge(self, edge, weight):
+        self.edges.append(edge)
+        self.graph.add_edge(edge[0], edge[1])
+
+    def addCentralities(self) : 
+        self.kalz_coef = max(list(nx.katz_centrality(self.graph).values()))
+        self.glob_clust_coef = mean(list(nx.clustering(self.graph).values()))
+        self.square_clustering_coef = mean(
+            list(nx.square_clustering(self.graph).values()))
+        self.harmonic_coef = max(list(nx.harmonic_centrality(self.graph).values()))
+        self.betweenness_coef = max(
+            list(nx.betweenness_centrality(self.graph).values()))
+        self.closeness_coef = max(list(nx.closeness_centrality(self.graph).values()))
+
+    def addName(self, name) :
+        self.name = name
+
+    def addStyle(self, style_label) :
+        self.style = style_label
+
+    def addHarmonyStyle(self, harmony_label) :
+        self.harmony_style = harmony_label
+
+    def addComposer(self, name) :
+        self.name = name
