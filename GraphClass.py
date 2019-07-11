@@ -39,8 +39,8 @@ class GraphClass:
         self.style = style_label
 
     def addHarmonyStyle(self, harmony_label):
-        self.harmony_style = harmony_label
+        self.harmony = harmony_label
 
-    def addComposer(self, name):
-        self.name = name
+    def addComposer(self, composer):
+        self.composer = composer
 
