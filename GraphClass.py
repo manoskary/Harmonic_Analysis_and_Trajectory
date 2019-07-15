@@ -9,7 +9,7 @@ class GraphClass:
         self.vertices = []
         self.edges = []
         self.graph = nx.Graph()
-        self.name = None
+        # self.name = None
         self.style = None
         self.composer = None
         self.harmony = None

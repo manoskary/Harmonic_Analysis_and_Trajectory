@@ -22,3 +22,15 @@ class TrajectoryClass:
 
     def getNextChord(self, offset=1):
         return self.listOfChords[self.index + offset]
+
+    def addType(self, trajType):
+        self.type = trajType
+
+    def addNumberOfInstruments(self, numberOfInstruments):
+        self.numOfInstr = numberOfInstruments
+
+    def addInstruments(self, listOfInstruments):
+        self.instruments = listOfInstruments
+        self.addNumberOfInstruments(len(listOfInstruments))
+
+
