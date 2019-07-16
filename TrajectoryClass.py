@@ -30,7 +30,7 @@ class TrajectoryClass:
         self.numOfInstr = numberOfInstruments
 
     def addInstruments(self, listOfInstruments):
-        self.instruments = listOfInstruments
-        self.addNumberOfInstruments(len(listOfInstruments))
+        self.instruments = list(set(listOfInstruments))
+        self.addNumberOfInstruments(len(set(listOfInstruments)))
 
 
