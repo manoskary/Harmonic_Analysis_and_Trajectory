@@ -26,6 +26,8 @@ class TrajectoryClass:
     def addType(self, trajType):
         self.type = trajType
 
+# ADD MIDI FILE PROPERTIES
+
     def addNumberOfInstruments(self, numberOfInstruments):
         self.numOfInstr = numberOfInstruments
 
@@ -33,4 +35,14 @@ class TrajectoryClass:
         self.instruments = list(set(listOfInstruments))
         self.addNumberOfInstruments(len(set(listOfInstruments)))
 
+# Find a way to estimate tempo
+    def addTempo(self, tempo):
+        self.tempo = tempo
+
+    def addNumber_of_signature_changes(self, number) :
+        self.number_of_signature_changes = number
+
+    def addTime_signature_changes(self, signature_changes):
+        self.time_signature_changes = list(set(signature_changes))
+        self.addNumber_of_signature_changes(len(signature_changes))
 
