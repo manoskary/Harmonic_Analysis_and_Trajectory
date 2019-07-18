@@ -6,6 +6,7 @@
 
 
 
+
 __Result Table__
 
 | Composer 1 | Composer 2 | Score  |
@@ -39,4 +40,6 @@ __Result Table__
 | Monteverdi | Jazz		  | 97-100%	 |
 | Monteverdi | Palestrina | 81-89%	 |
 
+
+60 pieces average by Composer.
 
