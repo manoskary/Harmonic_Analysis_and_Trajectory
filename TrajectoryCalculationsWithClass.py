@@ -333,7 +333,7 @@ def NewTrajectory(listOfChords, Tonnetz, origin=(0, 0)):
 # ----------------------------------------------OTHER TRAJECTORY----------
 
 
-def trajectoryRecursion(trajectory):
+def trajectoryRecursive(trajectory):
     alpha = 1
     while trajectory.index - alpha >= 0:
         try:
@@ -345,14 +345,6 @@ def trajectoryRecursion(trajectory):
             pass
         alpha += 1
     raise PlacementError('Non recursive definition of trajectory')
-
-
-def trajectoryRecursive(trajectory):
-    if trajectory.index > 1 and trajectory.index <= len(
-            trajectory.listOfChords) - 1:
-        return trajectoryRecursion(trajectory)
-    else:
-        raise IndexError()
 
 
 def TrajectoryLookBefore(listOfChords, Tonnetz, origin=(0, 0)):
