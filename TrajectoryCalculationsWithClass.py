@@ -10,9 +10,23 @@ class PlacementError(RuntimeError):
     def __init__(self):
         self.message = "Could not place Chord with this strategy"
 
-
 def isValidPos(pos):
     return pos != INVALID_POS
+
+# Successively tries to apply different strategies, stopping at the first sucessful one
+# Strategies are functions which take no argument (typically lambdas wrapping a function with its arguments)
+def applyFirstSuccessful(strategies):
+    result = False
+    for strategy in strategies:
+        try:
+            result = strategy()
+        # Consume exceptions silently
+        except PlacementError:
+            pass
+        if result:
+            return result
+    raise PlacementError()
+        
 
 
 def intervalToPoint(num, axes, T_axes):
