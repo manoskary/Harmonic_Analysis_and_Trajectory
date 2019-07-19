@@ -10,11 +10,15 @@ class PlacementError(RuntimeError):
     def __init__(self):
         self.message = "Could not place Chord with this strategy"
 
+
 def isValidPos(pos):
     return pos != INVALID_POS
 
-# Successively tries to apply different strategies, stopping at the first sucessful one
-# Strategies are functions which take no argument (typically lambdas wrapping a function with its arguments)
+# Successively tries to apply different strategies, stopping at the first successful one
+# Strategies are functions which take no argument (typically lambdas
+# wrapping a function with its arguments)
+
+
 def applyFirstSuccessful(strategies):
     result = False
     for strategy in strategies:
@@ -26,7 +30,6 @@ def applyFirstSuccessful(strategies):
         if result:
             return result
     raise PlacementError()
-        
 
 
 def intervalToPoint(num, axes, T_axes):
@@ -364,12 +367,15 @@ def TrajectoryLookBefore(listOfChords, Tonnetz, origin=(0, 0)):
         if index == 0:
             continue
         elif index == 1:
-            try:
-                thisChordCoord, connectingEdge = computeChordCoord(
-                    trajectory.getThisChord(), trajectory.getLastPosition(), trajectory.Tonnetz)
-            except PlacementError:
-                thisChordCoord, connectingEdge = placeChordWithVirtualRef(trajectory.getThisChord(
-                ), trajectory.getLastPosition(), trajectory.getNextChord(), trajectory.Tonnetz)
+            thisChordCoord, connectingEdge = applyFirstSuccessful([
+                lambda: computeChordCoord(trajectory.getThisChord(),
+                                          trajectory.getLastPosition(),
+                                          trajectory.Tonnetz),
+                lambda: placeChordWithVirtualRef(trajectory.getThisChord(),
+                                                 trajectory.getLastPosition(),
+                                                 trajectory.getNextChord(),
+                                                 trajectory.Tonnetz)
+            ])
         else:
             thisChordCoord, connectingEdge = trajectoryRecursive(trajectory)
         trajectory.addChord(thisChordCoord, connectingEdge)
