@@ -374,6 +374,34 @@ def TrajectoryLookBefore(listOfChords, Tonnetz, origin=(0, 0)):
     return trajectory
 
 
+# ------------------------TRAJECTORY NO FUTURE------------------------------
+
+
+def lastResort(trajectory):
+    coordDictbase = trajectory.Tonnetz
+    raise PlacementError()  # NYI
+
+
+def TrajectoryNoFuture(listOfChords, Tonnetz, origin=(0, 0)):
+    trajectory = TrajectoryClass(
+        ChordConfiguration(
+            listOfChords[0],
+            origin,
+            Tonnetz),
+        listOfChords,
+        Tonnetz)
+    for index, chord in enumerate(listOfChords):
+        if index == 0:
+            continue
+        else:
+            thisChordCoord, connectingEdge = applyFirstSuccessful([
+                lambda: trajectoryRecursive(trajectory),
+                lambda: lastResort(trajectory)
+            ])
+        trajectory.addChord(thisChordCoord, connectingEdge)
+    return trajectory
+
+
 # ------------------------TRAJECTORY EDGES----------------------------------
 
 
