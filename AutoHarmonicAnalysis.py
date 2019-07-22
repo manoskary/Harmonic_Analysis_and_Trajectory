@@ -6,7 +6,6 @@ from music21 import converter, corpus, instrument, midi, note, chord, pitch
 from NetworkX_GraphTranslation import *
 from structural_functions import getKeyByValue, mergeDicts
 import numpy as np
-from MelodyExtraction import *
 from itertools import islice
 
 

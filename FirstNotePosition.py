@@ -1,38 +1,31 @@
-from Data_and_Dicts import NotePointsT129, NotePointsT138, NotePointsT147, NotePointsT237, NotePointsT345
+from Data_and_Dicts import *
 
 
 def TonnetzToString(Tonnetz):
     if Tonnetz == [3, 4, 5]:
-        Tonnetz = 'T345'
+        TonnetzString = 'T345'
     elif Tonnetz == [1, 3, 8]:
-        Tonnetz = 'T138'
+        TonnetzString = 'T138'
     elif Tonnetz == [1, 4, 7]:
-        Tonnetz = 'T147'
+        TonnetzString = 'T147'
     elif Tonnetz == [1, 2, 9]:
-        Tonnetz = 'T129'
+        TonnetzString = 'T129'
     elif Tonnetz == [2, 3, 7]:
-        Tonnetz = 'T237'
+        TonnetzString = 'T237'
     else:
         raise ValueError()
-    return Tonnetz
+    return TonnetzString
 
+
+
+# TODO just Take a Chord and Place the first Note.
 
 def PlaceFirstNote(listOfChords, Tonnetz):
-    if Tonnetz == [3, 4, 5]:
-        firstnote = listOfChords[0][0]
-        position = NotePointsT345[firstnote]
-    elif Tonnetz == [1, 3, 8]:
-        firstnote = listOfChords[0][0]
-        position = NotePointsT138[firstnote]
-    elif Tonnetz == [1, 4, 7]:
-        firstnote = listOfChords[0][0]
-        position = NotePointsT147[firstnote]
-    elif Tonnetz == [1, 2, 9]:
-        firstnote = listOfChords[0][0]
-        position = NotePointsT129[firstnote]
-    elif Tonnetz == [2, 3, 7]:
-        firstnote = listOfChords[0][0]
-        position = NotePointsT237[firstnote]
-    else:
-        position = (0, 0)
-    return position
+    try :
+        firstNote = listOfChords[0][0]
+        return dictOfTonnetz[TonnetzToString(Tonnetz)][firstNote]
+    except :
+        print("This Tonnetz's Initial position is not defined")
+        return (0, 0)
+
+

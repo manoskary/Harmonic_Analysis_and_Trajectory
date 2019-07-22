@@ -1,15 +1,3 @@
-labels = {
-    'bach': [1, 1, 1],
-    'palestrina': [2, 2, 2],
-    'beethonven': [3, 3, 3],
-    'mozart': [4, 4, 4],
-    'monteverdi': [5, 5, 5],
-    'schumann': [6, 6, 6],
-    'chopin': [7, 7, 7],
-    'jazz': [8, 8, 8]
-}
-
-
 # x = 4, y = 3
 NotePointsT345 = {
     0: (0, 0),
@@ -98,3 +86,5 @@ dictOfTonnetz = {
     'T237': NotePointsT237,
     'T129': NotePointsT129
 }
+
+

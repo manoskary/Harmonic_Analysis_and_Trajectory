@@ -1,7 +1,8 @@
 import itertools as itt
 import ConvexHullMaxPairOfPoints as convHull
 from TrajectoryClass import TrajectoryClass
-
+from FirstNotePosition import TonnetzToString
+from Data_and_Dicts import dictOfTonnetz
 
 INVALID_POS = (104, 104)
 
@@ -344,7 +345,7 @@ def trajectoryRecursive(trajectory):
         except PlacementError:
             pass
         alpha += 1
-    raise PlacementError('Non recursive definition of trajectory')
+    raise PlacementError()
 
 
 def TrajectoryLookBefore(listOfChords, Tonnetz, origin=(0, 0)):
@@ -375,11 +376,21 @@ def TrajectoryLookBefore(listOfChords, Tonnetz, origin=(0, 0)):
 
 
 # ------------------------TRAJECTORY NO FUTURE------------------------------
-
+def getDictFromTonnetz(Tonnetz):
+    notePoints = dictOfTonnetz[TonnetzToString(Tonnetz)]
+    return notePoints
 
 def lastResort(trajectory):
-    coordDictbase = trajectory.Tonnetz
-    raise PlacementError()  # NYI
+    baseNoteDict = getDictFromTonnetz(trajectory.Tonnetz)
+    thisChordRandomNote = trajectory.getThisChord()[0]
+    lastChordRandomNote = trajectory.listOfChords[trajectory.index - 1][0]
+    lastChordCoord = trajectory.getLastPosition()
+    x1, y1 = baseNoteDict[lastChordRandomNote]
+    x2, y2 = baseNoteDict[thisChordRandomNote]
+    relation = (x1 - x2, y1 - y2) 
+    thisChordNoteCoord = (lastChordCoord[lastChordRandomNote][0] + relation[0], lastChordCoord[lastChordRandomNote][1] + relation[1])
+    coordinates = ChordConfiguration(trajectory.getThisChord(), thisChordNoteCoord, trajectory.Tonnetz)
+    return coordinates, []
 
 
 def TrajectoryNoFuture(listOfChords, Tonnetz, origin=(0, 0)):
@@ -436,3 +447,5 @@ def weightsOfTrajPoints(setOfPoints, multiSetOfPoints):
     Maximum = max(list(dictOfPointWeight.values()))
     Minimum = min(list(dictOfPointWeight.values()))
     return dictOfPointWeight
+
+    
