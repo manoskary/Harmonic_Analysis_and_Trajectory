@@ -48,7 +48,7 @@ def TonnetzConnectivity(chordVectors):
     }
     # Just use 'min' instead of 'max' for minimum.
     GetTheBestTonnetz = max(TonnetzConnectivity, key=TonnetzConnectivity.get)
-    # print('The Tonnetz Selected is :', GetTheBestTonnetz, 
+    # print('The Tonnetz Selected is :', GetTheBestTonnetz,
     # '\n' + 'The number of represented chords in this system is :'
     # , TonnetzConnectivity[GetTheBestTonnetz])
     return(GetTheBestTonnetz)

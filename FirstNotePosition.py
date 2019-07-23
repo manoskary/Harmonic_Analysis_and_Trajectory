@@ -16,6 +16,7 @@ def TonnetzToString(Tonnetz):
         raise ValueError()
     return TonnetzString
 
+
 # TODO just Take a Chord and Place the first Note.
 def PlaceFirstNote(listOfChords, Tonnetz):
     try:

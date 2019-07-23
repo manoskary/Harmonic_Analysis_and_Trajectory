@@ -15,7 +15,7 @@ class PlacementError(RuntimeError):
 def isValidPos(pos):
     return pos != INVALID_POS
 
-# Successively tries to apply different strategies, 
+# Successively tries to apply different strategies,
 # stopping at the first successful one.
 # Strategies are functions which take no argument (typically lambdas
 # wrapping a function with its arguments)
@@ -323,11 +323,11 @@ def NewTrajectory(listOfChords, Tonnetz, origin=(0, 0)):
         elif index == 1:
             try:
                 thisChordCoord, connectingEdge = computeChordCoord(
-                    trajectory.getThisChord(), trajectory.getLastPosition(), 
+                    trajectory.getThisChord(), trajectory.getLastPosition(),
                     trajectory.Tonnetz)
             except PlacementError:
                 thisChordCoord, connectingEdge = placeChordWithVirtualRef(
-                    trajectory.getThisChord(), trajectory.getLastPosition(), 
+                    trajectory.getThisChord(), trajectory.getLastPosition(),
                     trajectory.getNextChord(), trajectory.Tonnetz)
         else:
             thisChordCoord, connectingEdge = TrajectoryWithFuture(trajectory)
@@ -391,7 +391,7 @@ def lastResort(trajectory):
     lastChordCoord = trajectory.getLastPosition()
     x1, y1 = baseNoteDict[lastChordRandomNote]
     x2, y2 = baseNoteDict[thisChordRandomNote]
-    relation = (x1 - x2, y1 - y2) 
+    relation = (x1 - x2, y1 - y2)
     thisChordNoteCoord = (lastChordCoord[lastChordRandomNote][0] + relation[0],
         lastChordCoord[lastChordRandomNote][1] + relation[1])
     coordinates = ChordConfiguration(

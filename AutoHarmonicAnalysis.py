@@ -1,14 +1,17 @@
 from Tonnetz_Select import analysisFromCorpus, fromMidiToPCS
-from TrajectoryCalculationsWithClass import TrajectoryLookBefore, TrajectoryNoteEdges, SetOfPoints, weightsOfTrajPoints, NewTrajectory
-from TrajectoryClass import TrajectoryClass
+from TrajectoryCalculationsWithClass import TrajectoryLookBefore, SetOfPoints
+from TrajectoryCalculationsWithClass import TrajectoryNoteEdges
+from TrajectoryCalculationsWithClass import weightsOfTrajPoints
+from TrajectoryCalculationsWithClass import NewTrajectory
+from NetworkX_GraphTranslation import CreateGraph, CompareGraphsSpectrum
+from NetworkX_GraphTranslation import CentralityPoint2D
+from NetworkX_GraphTranslation import GlobalClusteringCoefficient
 from FirstNotePosition import PlaceFirstNote
-from music21 import corpus, midi
-from NetworkX_GraphTranslation import CreateGraph, CompareGraphsSpectrum, CentralityPoint2D
 from structural_functions import getKeyByValue, mergeDicts
+from music21 import corpus, midi
 import numpy as np
 from itertools import islice, product
 import os
-import music21 as ms
 
 
 def BachTonnetzSelect(number):
@@ -81,7 +84,7 @@ def GraphOfNewPiece(newPiece, directory):
     TrajectoryEdges = dict()
     Graph = dict()
     if directory == 'corpus':
-        file = ms.corpus.parse(newPiece)
+        file = corpus.parse(newPiece)
         chordList, Tonnetz = analysisFromCorpus(file)
     else:
         if newPiece.endswith(".mid") or newPiece.endswith(".MID"):
@@ -135,19 +138,19 @@ def ComparisonOfTrajectories(numberOfChorales, otherPiece):
     return newDictOfGraphs, spectralGraphCompare, globalClusteringCoef
 
 
-def ComparisonOfTrajectoriesLookBefore(numberOfChorales, otherPiece):
-    # Create the graphs for chorales and the otherPiece
-    BachDict = BachTonnetzSelect(numberOfChorales)
-    BachGraph = BachTrajectoryLookBeforeGraphs(BachDict)
-    graphOfNewPiece = GraphOfNewPieceLookBefore(otherPiece)
-    # Compare the graphs
-    newDictOfGraphs = mergeDicts(BachGraph, graphOfNewPiece)
+# def ComparisonOfTrajectoriesLookBefore(numberOfChorales, otherPiece):
+#     # Create the graphs for chorales and the otherPiece
+#     BachDict = BachTonnetzSelect(numberOfChorales)
+#     BachGraph = BachTrajectoryLookBeforeGraphs(BachDict)
+#     graphOfNewPiece = GraphOfNewPieceLookBefore(otherPiece)
+#     # Compare the graphs
+#     newDictOfGraphs = mergeDicts(BachGraph, graphOfNewPiece)
 
-    spectralGraphCompare = SpectralGraphCompare(newDictOfGraphs)
-    globalClusteringCoef = GlobalClustering(newDictOfGraphs)
+#     spectralGraphCompare = SpectralGraphCompare(newDictOfGraphs)
+#     globalClusteringCoef = GlobalClustering(newDictOfGraphs)
 
-    # return a dictionary of all trajectory graphs (key = name of piece)
-    return newDictOfGraphs, spectralGraphCompare, globalClusteringCoef
+#     # return a dictionary of all trajectory graphs (key = name of piece)
+#     return newDictOfGraphs, spectralGraphCompare, globalClusteringCoef
 
 
 # ------------------------------- ALL TRAJECTORY AUTOMATIC COMPARISON ----
@@ -167,30 +170,30 @@ def ComparisonOfTrajectoriesUnit(BachDict, otherPiece):
     return newDictOfGraphs, spectralGraphCompare, globalClusteringCoef
 
 
-def ComparisonOfTrajectoriesLookBeforeUnit(BachDict, otherPiece):
-    # Create the graphs for chorales and the otherPiece
-    BachGraph = BachTrajectoryLookBeforeGraphs(BachDict)
-    graphOfNewPiece = GraphOfNewPieceLookBefore(otherPiece)
-    # Compare the graphs
-    newDictOfGraphs = mergeDicts(BachGraph, graphOfNewPiece)
+# def ComparisonOfTrajectoriesLookBeforeUnit(BachDict, otherPiece):
+#     # Create the graphs for chorales and the otherPiece
+#     BachGraph = BachTrajectoryLookBeforeGraphs(BachDict)
+#     graphOfNewPiece = GraphOfNewPieceLookBefore(otherPiece)
+#     # Compare the graphs
+#     newDictOfGraphs = mergeDicts(BachGraph, graphOfNewPiece)
 
-    spectralGraphCompare = SpectralGraphCompare(newDictOfGraphs)
-    globalClusteringCoef = GlobalClustering(newDictOfGraphs)
+#     spectralGraphCompare = SpectralGraphCompare(newDictOfGraphs)
+#     globalClusteringCoef = GlobalClustering(newDictOfGraphs)
 
-    # return a dictionary of all trajectory graphs (key = name of piece)
-    return newDictOfGraphs, spectralGraphCompare, globalClusteringCoef
+#     # return a dictionary of all trajectory graphs (key = name of piece)
+#     return newDictOfGraphs, spectralGraphCompare, globalClusteringCoef
 
 
-def AllCompare(numberOfChorales, otherPiece):
-    BachDict = BachTonnetzSelect(numberOfChorales)
-    result1 = ComparisonOfTrajectoriesUnit(BachDict, otherPiece)
-    result2 = versionComparisonOfTrajectoriesLookBeforeUnit(
-        BachDict, otherPiece)
-    return result1, result2
+# def AllCompare(numberOfChorales, otherPiece):
+#     BachDict = BachTonnetzSelect(numberOfChorales)
+#     result1 = ComparisonOfTrajectoriesUnit(BachDict, otherPiece)
+#     result2 = ComparisonOfTrajectoriesLookBeforeUnit(
+#         BachDict, otherPiece)
+#     return result1, result2
 
 
 def GetWorksByComposer(composerName):
-    listofWorks = ms.corpus.getComposer(composerName)
+    listofWorks = corpus.getComposer(composerName)
     if len(listofWorks) > 150:
         listofWorks = list(islice(listofWorks, 150))
     dictOfGraphs = dict()
@@ -217,6 +220,7 @@ def GetWorksByDirectory(directory):
             except BaseException:
                 print("--> Cannot build Trajectory for ", file)
     return dictOfGraphs
+
 
 # The point of the following functions is to find the pieces that deviate
 # from the centralities distribution
@@ -270,7 +274,7 @@ def getPiecesOutOfDistribution(dictOfGraphs, edge='max'):
         piece = getInPoint(coordDict)
     try:
         corpusPiece = piece[0] + '.xml'
-        s = ms.corpus.parse(corpusPiece)
+        s = corpus.parse(corpusPiece)
         s.show()
     except BaseException:
         print('Cannot show the score')
