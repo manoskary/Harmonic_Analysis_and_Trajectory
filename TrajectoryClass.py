@@ -39,10 +39,9 @@ class TrajectoryClass:
     def addTempo(self, tempo):
         self.tempo = tempo
 
-    def addNumber_of_signature_changes(self, number) :
+    def addNumber_of_signature_changes(self, number):
         self.number_of_signature_changes = number
 
     def addTime_signature_changes(self, signature_changes):
         self.time_signature_changes = list(set(signature_changes))
         self.addNumber_of_signature_changes(len(signature_changes))
-

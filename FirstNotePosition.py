@@ -1,4 +1,4 @@
-from Data_and_Dicts import *
+from Data_and_Dicts import dictOfTonnetz
 
 
 def TonnetzToString(Tonnetz):
@@ -16,16 +16,11 @@ def TonnetzToString(Tonnetz):
         raise ValueError()
     return TonnetzString
 
-
-
 # TODO just Take a Chord and Place the first Note.
-
 def PlaceFirstNote(listOfChords, Tonnetz):
-    try :
+    try:
         firstNote = listOfChords[0][0]
         return dictOfTonnetz[TonnetzToString(Tonnetz)][firstNote]
-    except :
+    except:
         print("This Tonnetz's Initial position is not defined")
         return (0, 0)
-
-

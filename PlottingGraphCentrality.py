@@ -1,6 +1,5 @@
-from NetworkX_GraphTranslation import *
+from NetworkX_GraphTranslation import CentralityPoint2D, chooseCentrality
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import axes3d
 import os
 
 
