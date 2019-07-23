@@ -7,8 +7,8 @@ INVALID_POS = (104, 104)
 
 
 class PlacementError(RuntimeError):
-    def __init__(self):
-        self.message = "Could not place Chord with this strategy"
+    def __init__(self, message="Could not place Chord with this strategy"):
+        self.message = message
 
 
 def isValidPos(pos):
