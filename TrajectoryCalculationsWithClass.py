@@ -293,7 +293,7 @@ def TrajectoryWithFuture(trajectory):
             trajectory.listOfChords) - 1:
         return TrajectoryCheckPosition(trajectory)
     elif trajectory.index == 0:
-        raise IndexError()
+        raise PlacementError("Strategy not valid for this position")
     else:
         return computeChordCoord(
             trajectory.getThisChord(),
