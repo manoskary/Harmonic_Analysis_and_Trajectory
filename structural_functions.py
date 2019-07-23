@@ -41,3 +41,11 @@ def getKeyByValue(dictOfElements, valueToFind):
 def mergeDicts(dict1, dict2):
     res = {**dict1, **dict2}
     return res
+
+def testInput(verificationFunction): 
+    while True:
+        result = input()
+        if verificationFunction(result):
+            return result
+        else:
+            print("Invalid input, try again")
