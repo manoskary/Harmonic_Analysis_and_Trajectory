@@ -3,7 +3,7 @@ class TrajectoryClass:
     def __init__(self, initialChordPosition, listOfChords, Tonnetz):
         self.chordPositions = [initialChordPosition]
         self.connectingEdges = []
-        self.index = 1
+        self.index = 1  # Redundant: should always be len(chordPositions)
         self.listOfChords = listOfChords
         self.Tonnetz = Tonnetz
 
@@ -25,6 +25,10 @@ class TrajectoryClass:
 
     def addType(self, trajType):
         self.type = trajType
+
+    def chordsRemaining(self):
+        """ Return the number of remaining chords to place. """
+        return len(self.listOfChords) - len(self.chordPositions)
 
 # ADD MIDI FILE PROPERTIES
 

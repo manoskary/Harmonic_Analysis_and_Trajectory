@@ -266,33 +266,25 @@ def TrajectoryLookConnected(trajectory):
 
 
 def TrajectoryCheckPosition(trajectory):
-    try:
-        return TrajectoryLookConnected(trajectory)
-    except PlacementError:
-        try:
-            return computeChordCoord(
+    return applyFirstSuccessful([
+        lambda: TrajectoryLookConnected(trajectory),
+        lambda: computeChordCoord(
                 trajectory.getThisChord(),
                 trajectory.getLastPosition(2),
-                trajectory.Tonnetz)
-        except PlacementError:
-            numberOfIter = 1
-            conditionalWhile = True
-            while conditionalWhile and numberOfIter < 5:
-                try:
-                    conditionalWhile = False
-                    return placeChordWithVirtualRef(
-                        trajectory.getThisChord(),
-                        trajectory.getLastPosition(),
-                        trajectory.getNextChord(numberOfIter),
-                        trajectory.Tonnetz)
-                except PlacementError:
-                    numberOfIter += 1
-                    conditionalWhile = True
+                trajectory.Tonnetz),
+        *(
+            lambda: placeChordWithVirtualRef(
+                    trajectory.getThisChord(),
+                    trajectory.getLastPosition(),
+                    trajectory.getNextChord(lookahead),
+                    trajectory.Tonnetz)
+            for lookahead in range(1, min(5, trajectory.chordsRemaining()))
+        )
+    ])
 
 
 def TrajectoryWithFuture(trajectory):
-    if trajectory.index > 1 and trajectory.index < len(
-            trajectory.listOfChords) - 1:
+    if trajectory.index > 1 and trajectory.chordsRemaining() > 1:
         return TrajectoryCheckPosition(trajectory)
     elif trajectory.index == 0:
         raise PlacementError("Strategy not valid for this position")
