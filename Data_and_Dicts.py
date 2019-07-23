@@ -86,5 +86,3 @@ dictOfTonnetz = {
     'T237': NotePointsT237,
     'T129': NotePointsT129
 }
-
-

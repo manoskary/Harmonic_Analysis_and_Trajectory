@@ -28,7 +28,9 @@ def hulls(Points):
 
 
 def rotatingCalipers(Points):
-    ### Given a list of 2d points, finds all ways of sandwiching the points between two parallel lines that touch one point each, and yields the sequence of pairs of points touched by each pair of lines.
+    # Given a list of 2d points, finds all ways of sandwiching the points
+    # between two parallel lines that touch one point each, and 
+    # yields the sequence of pairs of points touched by each pair of lines.
     U, L = hulls(Points)
     i = 0
     j = len(L) - 1

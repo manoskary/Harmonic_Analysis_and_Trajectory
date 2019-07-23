@@ -48,7 +48,9 @@ def TonnetzConnectivity(chordVectors):
     }
     # Just use 'min' instead of 'max' for minimum.
     GetTheBestTonnetz = max(TonnetzConnectivity, key=TonnetzConnectivity.get)
-    ### print('The Tonnetz Selected is :', GetTheBestTonnetz, '\n' + 'The number of represented chords in this system is :', TonnetzConnectivity[GetTheBestTonnetz])
+    # print('The Tonnetz Selected is :', GetTheBestTonnetz,
+    # '\n' + 'The number of represented chords in this system is :'
+    # , TonnetzConnectivity[GetTheBestTonnetz])
     return(GetTheBestTonnetz)
 
 
@@ -265,7 +267,8 @@ def fromMidiToPCS(midifile):
     Tonnetz = TonnetzConfigDict(TonnetzConnectivity(chordVectors))
     chordListNoDoubles, chordListNoDoublesVec = removeDoubles(
         chordList, chordVectors)
-    ### print('After duplicate reduction the number of chords is :', len(chordListNoDoubles))
+    # print('After duplicate reduction the number of chords is :',
+    # len(chordListNoDoubles))
     chordListConnect, vectorsListConnect = removeNonConnected(
         chordListNoDoubles, chordListNoDoublesVec, Tonnetz)
     print(len(chordListConnect))
@@ -277,7 +280,8 @@ def analysisFromCorpus(file):
     Tonnetz = TonnetzConfigDict(TonnetzConnectivity(chordVectors))
     chordListNoDoubles, chordListNoDoublesVec = removeDoubles(
         chordList, chordVectors)
-    ### print('After duplicate reduction the number of chords is :', len(chordListNoDoubles))
+    # print('After duplicate reduction the number of chords is :',
+    # len(chordListNoDoubles))
     chordListConnect, vectorsListConnect = removeNonConnected(
         chordListNoDoubles, chordListNoDoublesVec, Tonnetz)
     # print(len(chordListConnect))

@@ -15,7 +15,8 @@ class PlacementError(RuntimeError):
 def isValidPos(pos):
     return pos != INVALID_POS
 
-# Successively tries to apply different strategies, stopping at the first successful one
+# Successively tries to apply different strategies,
+# stopping at the first successful one.
 # Strategies are functions which take no argument (typically lambdas
 # wrapping a function with its arguments)
 
@@ -385,6 +386,7 @@ def getDictFromTonnetz(Tonnetz):
     notePoints = dictOfTonnetz[TonnetzToString(Tonnetz)]
     return notePoints
 
+
 def lastResort(trajectory):
     baseNoteDict = getDictFromTonnetz(trajectory.Tonnetz)
     thisChordRandomNote = trajectory.getThisChord()[0]
@@ -392,9 +394,11 @@ def lastResort(trajectory):
     lastChordCoord = trajectory.getLastPosition()
     x1, y1 = baseNoteDict[lastChordRandomNote]
     x2, y2 = baseNoteDict[thisChordRandomNote]
-    relation = (x1 - x2, y1 - y2) 
-    thisChordNoteCoord = (lastChordCoord[lastChordRandomNote][0] + relation[0], lastChordCoord[lastChordRandomNote][1] + relation[1])
-    coordinates = ChordConfiguration(trajectory.getThisChord(), thisChordNoteCoord, trajectory.Tonnetz)
+    relation = (x1 - x2, y1 - y2)
+    thisChordNoteCoord = (lastChordCoord[lastChordRandomNote][0] + relation[0],
+        lastChordCoord[lastChordRandomNote][1] + relation[1])
+    coordinates = ChordConfiguration(
+        trajectory.getThisChord(), thisChordNoteCoord, trajectory.Tonnetz)
     return coordinates, []
 
 
@@ -449,8 +453,7 @@ def weightsOfTrajPoints(setOfPoints, multiSetOfPoints):
     dictOfPointWeight = dict()
     for point in setOfPoints:
         dictOfPointWeight[point] = multiSetOfPoints.count(point)
-    Maximum = max(list(dictOfPointWeight.values()))
-    Minimum = min(list(dictOfPointWeight.values()))
+    # Ideas about Using Normalized weights :
+    # Maximum = max(list(dictOfPointWeight.values()))
+    # Minimum = min(list(dictOfPointWeight.values()))
     return dictOfPointWeight
-
-    
