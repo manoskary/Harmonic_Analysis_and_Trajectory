@@ -319,12 +319,17 @@ def NewTrajectory(listOfChords, Tonnetz, origin=(0, 0)):
         if index == 0:
             continue
         elif index == 1:
-            try:
-                thisChordCoord, connectingEdge = computeChordCoord(
-                    trajectory.getThisChord(), trajectory.getLastPosition(), trajectory.Tonnetz)
-            except PlacementError:
-                thisChordCoord, connectingEdge = placeChordWithVirtualRef(trajectory.getThisChord(
-                ), trajectory.getLastPosition(), trajectory.getNextChord(), trajectory.Tonnetz)
+            thisChordCoord, connectingEdge = applyFirstSuccessful([
+                lambda: computeChordCoord(
+                    trajectory.getThisChord(),
+                    trajectory.getLastPosition(),
+                    trajectory.Tonnetz),
+                lambda: placeChordWithVirtualRef(
+                    trajectory.getThisChord(),
+                    trajectory.getLastPosition(),
+                    trajectory.getNextChord(),
+                    trajectory.Tonnetz)
+            ])
         else:
             thisChordCoord, connectingEdge = TrajectoryWithFuture(trajectory)
         trajectory.addChord(thisChordCoord, connectingEdge)
