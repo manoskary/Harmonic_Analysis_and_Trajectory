@@ -8,8 +8,8 @@ INVALID_POS = (104, 104)
 
 
 class PlacementError(RuntimeError):
-    def __init__(self):
-        self.message = "Could not place Chord with this strategy"
+    def __init__(self, message="Could not place Chord with this strategy"):
+        self.message = message
 
 
 def isValidPos(pos):
@@ -295,7 +295,7 @@ def TrajectoryWithFuture(trajectory):
             trajectory.listOfChords) - 1:
         return TrajectoryCheckPosition(trajectory)
     elif trajectory.index == 0:
-        raise IndexError()
+        raise PlacementError("Strategy not valid for this position")
     else:
         return computeChordCoord(
             trajectory.getThisChord(),
@@ -321,14 +321,17 @@ def NewTrajectory(listOfChords, Tonnetz, origin=(0, 0)):
         if index == 0:
             continue
         elif index == 1:
-            try:
-                thisChordCoord, connectingEdge = computeChordCoord(
-                    trajectory.getThisChord(), trajectory.getLastPosition(),
+            thisChordCoord, connectingEdge = applyFirstSuccessful([
+                lambda: computeChordCoord(
+                    trajectory.getThisChord(),
+                    trajectory.getLastPosition(),
+                    trajectory.Tonnetz),
+                lambda: placeChordWithVirtualRef(
+                    trajectory.getThisChord(),
+                    trajectory.getLastPosition(),
+                    trajectory.getNextChord(),
                     trajectory.Tonnetz)
-            except PlacementError:
-                thisChordCoord, connectingEdge = placeChordWithVirtualRef(
-                    trajectory.getThisChord(), trajectory.getLastPosition(),
-                    trajectory.getNextChord(), trajectory.Tonnetz)
+            ])
         else:
             thisChordCoord, connectingEdge = TrajectoryWithFuture(trajectory)
         trajectory.addChord(thisChordCoord, connectingEdge)
