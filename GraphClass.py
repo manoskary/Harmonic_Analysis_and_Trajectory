@@ -1,3 +1,5 @@
+# The Graph Object contains Trajectory, Midi Info, Centralities, FileName, etc
+
 from networkx import nx
 from numpy import mean
 

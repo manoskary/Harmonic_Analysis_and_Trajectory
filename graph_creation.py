@@ -1,7 +1,11 @@
+# A script that takes a trajectory object and builds a graph object 
+# as defined in Graph Class
+
 from itertools import product
 from GraphClass import GraphClass
 
 
+# from trajectory build edges based on cartesian product
 def TrajectoryNoteEdges(trajectory):
     TotalEdges = []
     dist = [-1, 0, 1]
@@ -18,6 +22,7 @@ def TrajectoryNoteEdges(trajectory):
     return TotalEdges
 
 
+# Add Vertex one by one in object
 def CreateVertices(graph):
     setOfNodes = NodesSetCreate(graph)
     nodes = dict()
@@ -27,6 +32,7 @@ def CreateVertices(graph):
     return nodes
 
 
+# Take the set of all duplicate points in trajectory object
 def NodesSetCreate(graph):
     listOfNodes = []
     for dictChord in graph.trajectory.chordPositions:
@@ -36,6 +42,7 @@ def NodesSetCreate(graph):
     return setOfNodes
 
 
+# Take the set of all duplicate points in trajectory object
 def EdgesSetCreate(TrajectoryEdges):
     listOfEdges = []
     for edgesList in TrajectoryEdges:
@@ -45,6 +52,7 @@ def EdgesSetCreate(TrajectoryEdges):
     return setOfEdges, listOfEdges
 
 
+# add weights on edges based on multiplicity
 def EdgeWeights(setOfEdges, multiSetOfEdges):
     weights = dict()
     for edge in setOfEdges:
@@ -54,6 +62,7 @@ def EdgeWeights(setOfEdges, multiSetOfEdges):
     return weights
 
 
+# Take the set of all duplicate points in trajectory object
 def CreateEdges(graph, Nodes, Edges):
     setOfEdges, multiSetOfEdges = EdgesSetCreate(Edges)
     weights = EdgeWeights(setOfEdges, multiSetOfEdges)
@@ -62,6 +71,7 @@ def CreateEdges(graph, Nodes, Edges):
             graph.addEdge(edge, weights[edge])
 
 
+# Create the object by encapsulating all functions
 def CreateGraph(trajectory):
     graph = GraphClass(trajectory)
     edges = TrajectoryNoteEdges(trajectory)

@@ -1,8 +1,13 @@
+# This is a script to provide all functions in order to automatically select
+# Tonnetz System and modify chords
 import music21 as ms
 from itertools import product
 import ast
+from Data_and_Dicts import dictOfTonnetze
 
 
+# A functions that receives a parsed file (possibly from corpus) and returns
+# a the chordified list of chords and list of Interval Vectors
 def parsedFile(file):
     mChords = file.chordify()
     chordList = []
@@ -14,6 +19,7 @@ def parsedFile(file):
     return chordList, chordVectors
 
 
+# The same function as above that first parses the Midi file
 def parseMidi(midifile):
     mfile = ms.converter.parse(midifile)
     mChords = mfile.chordify()
@@ -26,6 +32,7 @@ def parseMidi(midifile):
     return chordList, chordVectors
 
 
+# The predicate that tests the representability chord  based on IntVec
 def Connected(l1, x, y, z):
     j = 0
     for i in l1:
@@ -36,6 +43,7 @@ def Connected(l1, x, y, z):
     return j
 
 
+# Taking the max of all representable chords
 def TonnetzConnectivity(chordVectors):
     TonnetzConnectivity = {
         'T129': Connected(chordVectors, 0, 1, 2),
@@ -54,24 +62,12 @@ def TonnetzConnectivity(chordVectors):
     return(GetTheBestTonnetz)
 
 
-def TonnetzDict():
-    DictOfTonnetze = {
-        'T129': [1, 2, 9],
-        'T138': [1, 3, 8],
-        'T147': [1, 4, 7],
-        'T156': [1, 5, 6],
-        'T237': [2, 3, 7],
-        'T345': [3, 4, 5]
-    }
-    return DictOfTonnetze
-
-
+# finally choose the appropriate Tonnetz config
 def TonnetzConfigDict(GetTheBestTonnetz):
-    DictOfTonnetze = TonnetzDict()
-    Tonnetz = DictOfTonnetze[GetTheBestTonnetz]
+    Tonnetz = dictOfTonnetze[GetTheBestTonnetz]
     return Tonnetz
 
-
+# Check connectivity based on IntVec
 def axesDict(T_axes):
     intervalList = [
         T_axes[0],

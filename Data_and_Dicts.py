@@ -1,3 +1,6 @@
+# HERE are the base Points for all valid Tonnetze Systems
+# A period of all 12 notes divided by mod 3, mod 4 (always stable)
+
 # x = 4, y = 3
 NotePointsT345 = {
     0: (0, 0),
@@ -85,4 +88,14 @@ dictOfTonnetz = {
     'T138': NotePointsT138,
     'T237': NotePointsT237,
     'T129': NotePointsT129
+}
+
+
+dictOfTonnetze = {
+    'T129': [1, 2, 9],
+    'T138': [1, 3, 8],
+    'T147': [1, 4, 7],
+    'T156': [1, 5, 6],
+    'T237': [2, 3, 7],
+    'T345': [3, 4, 5]
 }

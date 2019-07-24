@@ -1,19 +1,9 @@
-from Data_and_Dicts import dictOfTonnetz
+from Data_and_Dicts import dictOfTonnetz, dictOfTonnetze
+from structural_functions import getKeyByValue
 
 
 def TonnetzToString(Tonnetz):
-    if Tonnetz == [3, 4, 5]:
-        TonnetzString = 'T345'
-    elif Tonnetz == [1, 3, 8]:
-        TonnetzString = 'T138'
-    elif Tonnetz == [1, 4, 7]:
-        TonnetzString = 'T147'
-    elif Tonnetz == [1, 2, 9]:
-        TonnetzString = 'T129'
-    elif Tonnetz == [2, 3, 7]:
-        TonnetzString = 'T237'
-    else:
-        raise ValueError()
+    TonnetzString = getKeyByValue(dictOfTonnetze, Tonnetz)
     return TonnetzString
 
 
