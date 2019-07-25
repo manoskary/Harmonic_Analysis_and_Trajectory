@@ -17,11 +17,13 @@ jobs:
          # name: install dependencies
          command: |
             sudo pip install pytest-flake8 
+            sudo pip install pytest-docstyle
 
       - run:
           name: run tests
           command: |
              pytest "--flake8"
+             pytest "--docstyle"
 
       - store_artifacts:
           path: test-reports

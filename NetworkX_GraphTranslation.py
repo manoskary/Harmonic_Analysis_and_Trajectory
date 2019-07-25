@@ -1,11 +1,13 @@
+import heapq
+
+import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
-import matplotlib.pyplot as plt
-import heapq
 from structural_functions import getKeyByValue
 
 
 def CreateVertices(TrajectoryPoints, Graph):
+    """Add Vertex one by one in object."""
     setOfNodes = NodesSetCreate(TrajectoryPoints)
     nodes = dict()
     for index, point in enumerate(setOfNodes):
@@ -15,6 +17,7 @@ def CreateVertices(TrajectoryPoints, Graph):
 
 
 def NodesSetCreate(TrajectoryPoints):
+    """Take the set of all duplicate points in trajectory object."""
     listOfNodes = []
     for dictChord in TrajectoryPoints:
         for node in dictChord.values():
@@ -24,6 +27,7 @@ def NodesSetCreate(TrajectoryPoints):
 
 
 def EdgesSetCreate(TrajectoryEdges):
+    """Take the set of all duplicate points in trajectory object."""
     listOfEdges = []
     for edgesList in TrajectoryEdges:
         for edge in edgesList:
@@ -33,6 +37,7 @@ def EdgesSetCreate(TrajectoryEdges):
 
 
 def EdgeWeights(setOfEdges, multiSetOfEdges):
+    """Add weights on edges based on multiplicity."""
     weights = dict()
     for edge in setOfEdges:
         weights[edge] = multiSetOfEdges.count(edge)
@@ -42,6 +47,7 @@ def EdgeWeights(setOfEdges, multiSetOfEdges):
 
 
 def CreateEdges(Nodes, Edges, Graph):
+    """Take the set of all duplicate points in trajectory object."""
     setOfEdges, multiSetOfEdges = EdgesSetCreate(Edges)
     weights = EdgeWeights(setOfEdges, multiSetOfEdges)
     for edge in setOfEdges:
@@ -54,6 +60,11 @@ def CreateEdges(Nodes, Edges, Graph):
 
 
 def select_k(spectrum, minimum_energy=0.9):
+    """Select k : graph spectrum -> 90% eigenvalues.
+
+    Take a graph spectrum and return the eigenvalues that describe the 90%
+    of the graph.
+    """
     running_total = 0.0
     total = sum(spectrum)
     if total == 0.0:
@@ -67,6 +78,13 @@ def select_k(spectrum, minimum_energy=0.9):
 
 
 def CompareGraphsSpectrum(graph1, graph2):
+    """Compare the spectrum of 2 graphs.
+
+    The similarity coeficient in this method compares the minimum
+    amount of eigen vectors that describe the 90 % of the graph.
+    It yields a possitive number between 0 and infinity.
+    Note that closest to zero means higher similarity.
+    """
     laplacian1 = nx.spectrum.laplacian_spectrum(graph1)
     laplacian2 = nx.spectrum.laplacian_spectrum(graph2)
     k1 = select_k(laplacian1)
@@ -80,6 +98,7 @@ def CompareGraphsSpectrum(graph1, graph2):
 
 
 def graphSimilarity(graphDict):
+    """Compute the eigenvalue similarity of graphs."""
     similarityDict = dict()
     for g1 in graphDict.values():
         for g2 in graphDict.values():
@@ -93,6 +112,7 @@ def graphSimilarity(graphDict):
 
 
 def CreateGraph(Points, Edges):
+    """Create an networkX graph."""
     G = nx.Graph()
     newG, Nodes = CreateVertices(Points, G)
     Graph = CreateEdges(Nodes, Edges, newG)
@@ -100,22 +120,29 @@ def CreateGraph(Points, Edges):
 
 
 def GlobalClusteringCoefficient(graph):
+    """Compute the Global clustering coefficient.
+
+    The coefficient is the mean of all the trinagles divided by the number
+    of nodes.
+    """
     coef = np.mean(list(nx.clustering(graph).values()))
     return coef
 
 
 def ClusteringTransitivity(graph):
+    """Compute the clustering trasitivity coefficient."""
     transitivity = nx.transitivity(graph)
     return transitivity
 
 
 def SquareClusteringCoefficient(graph):
+    """Compute the square clustering coefficient."""
     coef = np.mean(list(nx.square_clustering(graph).values()))
     return coef
 
 
 def PlotCentralities(graph):
-
+    """Plot all centralities for one graph."""
     c_degree = nx.degree_centrality(graph)
     c_degree = list(c_degree.values())
 
@@ -167,25 +194,8 @@ def PlotCentralities(graph):
     axarr[1, 1].set_title('Betweenness Centrality', size=16)
 
 
-def CentralityPoint4D(graph):
-    c_degree = nx.degree_centrality(graph)
-    c_degree = max(list(c_degree.values()))
-
-    c_eigenvector = nx.katz_centrality(graph)
-    c_eigenvector = max(list(c_eigenvector.values()))
-
-    c_harmonic = nx.harmonic_centrality(graph)
-    c_harmonic = max(list(c_harmonic.values()))
-
-    c_betweenness = nx.betweenness_centrality(graph)
-    c_betweenness = max(list(c_betweenness.values()))
-
-    point = (c_degree, c_eigenvector, c_harmonic, c_betweenness)
-    return point
-
-
 def CentralityPoint2D(graph, numberOfPoints, typePlot):
-
+    """Plot 3D centrality based on type."""
     points = dict()
 
     c_eigenvector = nx.katz_centrality(graph)
@@ -226,6 +236,10 @@ def CentralityPoint2D(graph, numberOfPoints, typePlot):
 
 
 def kaltzCentrality(graph, numberOfPoints):
+    """Compute the largest kalz centralities coefficients of a graph.
+
+    You can specify the number of points to output.
+    """
     c_eigenvector = nx.katz_centrality(graph)
     c_eigenvector = heapq.nlargest(
         numberOfPoints, list(
@@ -234,6 +248,10 @@ def kaltzCentrality(graph, numberOfPoints):
 
 
 def betweennessCentrality(graph, numberOfPoints):
+    """Compute the largest betweenness centralities coefficients of a graph.
+
+    You can specify the number of points to output.
+    """
     c_betweenness = nx.betweenness_centrality(graph)
     c_betweenness = heapq.nlargest(
         numberOfPoints, list(
@@ -242,24 +260,40 @@ def betweennessCentrality(graph, numberOfPoints):
 
 
 def closenessCentrality(graph, numberOfPoints):
+    """Compute the largest closeness centralities coefficients of a graph.
+
+    You can specify the number of points to output.
+    """
     c_closeness = nx.closeness_centrality(graph)
     c_closeness = heapq.nlargest(numberOfPoints, list(c_closeness.values()))
     return c_closeness
 
 
 def harmonicCentrality(graph, numberOfPoints):
+    """Compute the largest harmonic centralities coefficients of a graph.
+
+    You can specify the number of points to output.
+    """
     c_harmonic = nx.harmonic_centrality(graph)
     c_harmonic = heapq.nlargest(numberOfPoints, list(c_harmonic.values()))
     return c_harmonic
 
 
 def degreeCentrality(graph, numberOfPoints):
+    """Compute the largest degree centralities coefficients of a graph.
+
+    You can specify the number of points to output.
+    """
     c_degree = nx.degree_centrality(graph)
     c_degree = heapq.nlargest(numberOfPoints, list(c_degree.values()))
     return c_degree
 
 
 def chooseCentrality(graph, numberOfPoints, typePlot):
+    """Choose the Centrality you want to compute.
+
+    You can specify the number of points to output.
+    """
     if typePlot == 'kaltz':
         return kaltzCentrality(graph, numberOfPoints)
     elif typePlot == 'betweenness':

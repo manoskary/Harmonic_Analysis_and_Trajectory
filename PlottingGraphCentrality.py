@@ -1,9 +1,11 @@
-from NetworkX_GraphTranslation import CentralityPoint2D, chooseCentrality
-import matplotlib.pyplot as plt
 import os
+
+import matplotlib.pyplot as plt
+from NetworkX_GraphTranslation import CentralityPoint2D, chooseCentrality
 
 
 def getCentrCoord(dictOfGraphs, typePlot):
+    """Get the coordinates of a certain plot Type."""
     points = []
     coordDict = dict()
     for key, graph in dictOfGraphs.items():
@@ -22,7 +24,7 @@ def CentralitiesScatterPlot(
         label1="first_input",
         label2="second_input",
         label3="third_input"):
-
+    """Return a Scatter Plot of Centralities for 3 different labels."""
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1, projection='3d')
 
@@ -86,7 +88,7 @@ def CentralitiesScatterPlot(
 
 
 def Centralities2DPlot(dictOfGraphs1, dictOfGraphs2, dictOfGraphs3):
-
+    """Return a Scatter Plot of Centralities for 2 different labels."""
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
 
@@ -134,6 +136,7 @@ def plotCentrality(
         directory='Graphs',
         name='test',
         fileIndex=0):
+    """Return a Scatter Plot of Centralities for a single label."""
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1, projection='3d')
     # ax = fig.gca(projection='3d')
@@ -156,6 +159,7 @@ def plotCentrality(
 
 
 def plotAllCentralities3D(dictOfGraphs):
+    """Return a Scatter Plot of every Centrality."""
     centralities = ['kaltz', 'betweenness', 'closeness', 'harmonic', 'degree']
     directory = input("Enter the directory of your files : ")
     isDirectory = os.path.isdir(directory)

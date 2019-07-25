@@ -1,16 +1,16 @@
+from itertools import groupby, islice
+from operator import itemgetter
 import os
 import pickle
 
-import pretty_midi as ptm
-import music21 as ms
-from Tonnetz_Select import fromMidiToPCS as fmpc
-from Tonnetz_Select import analysisFromCorpus
-from TrajectoryCalculationsWithClass import NewTrajectory, TrajectoryLookBefore
-from graph_creation import CreateGraph
 from FirstNotePosition import PlaceFirstNote
+from graph_creation import CreateGraph
+import music21 as ms
+import pretty_midi as ptm
 from structural_functions import testInput
-from itertools import islice, groupby
-from operator import itemgetter
+from Tonnetz_Select import analysisFromCorpus
+from Tonnetz_Select import fromMidiToPCS as fmpc
+from TrajectoryCalculationsWithClass import NewTrajectory, TrajectoryLookBefore
 
 
 def pickleSave(dictOfGraphs, Composer_Name):

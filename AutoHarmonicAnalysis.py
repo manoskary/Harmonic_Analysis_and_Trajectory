@@ -1,20 +1,22 @@
-from Tonnetz_Select import analysisFromCorpus, fromMidiToPCS
-from TrajectoryCalculationsWithClass import TrajectoryLookBefore, SetOfPoints
-from TrajectoryCalculationsWithClass import TrajectoryNoteEdges
-from TrajectoryCalculationsWithClass import weightsOfTrajPoints
-from TrajectoryCalculationsWithClass import NewTrajectory
-from NetworkX_GraphTranslation import CreateGraph, CompareGraphsSpectrum
-from NetworkX_GraphTranslation import CentralityPoint2D
-from NetworkX_GraphTranslation import GlobalClusteringCoefficient
-from FirstNotePosition import PlaceFirstNote
-from structural_functions import getKeyByValue, mergeDicts
-from music21 import corpus, midi
-import numpy as np
 from itertools import islice, product
 import os
 
+from FirstNotePosition import PlaceFirstNote
+from music21 import corpus, midi
+from NetworkX_GraphTranslation import CentralityPoint2D
+from NetworkX_GraphTranslation import CompareGraphsSpectrum, CreateGraph
+from NetworkX_GraphTranslation import GlobalClusteringCoefficient
+import numpy as np
+from structural_functions import getKeyByValue, mergeDicts
+from Tonnetz_Select import analysisFromCorpus, fromMidiToPCS
+from TrajectoryCalculationsWithClass import NewTrajectory
+from TrajectoryCalculationsWithClass import SetOfPoints, TrajectoryLookBefore
+from TrajectoryCalculationsWithClass import TrajectoryNoteEdges
+from TrajectoryCalculationsWithClass import weightsOfTrajPoints
+
 
 def BachTonnetzSelect(number):
+    """Search music21 corpus for a number of bach Chorales."""
     listOfBachPieces = dict()
     for chorale in corpus.chorales.Iterator(1, number, returnType='filename'):
         file = corpus.parse(chorale)
@@ -23,6 +25,7 @@ def BachTonnetzSelect(number):
 
 
 def BachTrajectoryGraphs(number, type='NewTrajectory'):
+    """Create graphs from a number of bach chorales."""
     listOfBachPieces = BachTonnetzSelect(number)
     BachTrajectoryPoints = dict()
     BachTrajectoryPointWeights = dict()
@@ -51,6 +54,7 @@ def BachTrajectoryGraphs(number, type='NewTrajectory'):
 
 
 def ComparingGraphs(DictOfGraphs):
+    """Compare the spectrum of 2 graphs."""
     GraphComparison = dict()
     for key1, key2 in product(DictOfGraphs.keys(), DictOfGraphs.keys()):
         if key1 != key2:
@@ -62,6 +66,7 @@ def ComparingGraphs(DictOfGraphs):
 
 
 def open_midi(file_path, remove_drums=True):
+    """Read a midi and filter percussive channels."""
     mf = midi.MidiFile()
     mf.open(file_path)
     mf.read()
@@ -74,11 +79,13 @@ def open_midi(file_path, remove_drums=True):
 
 
 def concat_path(path, child):
+    """Concat path with subfolder or file."""
     newpath = path + "/" + child
     return newpath
 
 
 def GraphOfNewPiece(newPiece, directory):
+    """Create the graph of a piece."""
     TrajectoryPoints = dict()
     TrajectoryPointWeights = dict()
     TrajectoryEdges = dict()
@@ -108,6 +115,7 @@ def GraphOfNewPiece(newPiece, directory):
 
 
 def GlobalClustering(dictOfGraphs):
+    """Compute global clustering coefficient."""
     globalClusteringCoef = dict()
     for key, graph in dictOfGraphs.items():
         globalClusteringCoef[key] = GlobalClusteringCoefficient(graph)
@@ -115,6 +123,7 @@ def GlobalClustering(dictOfGraphs):
 
 
 def SpectralGraphCompare(dictOfGraphs):
+    """Compare the spectrum of a dict of graphs."""
     graphComparison = ComparingGraphs(dictOfGraphs)
     minimum = min(list(graphComparison.values()))
     maximum = max(list(graphComparison.values()))
@@ -124,7 +133,7 @@ def SpectralGraphCompare(dictOfGraphs):
 
 
 def ComparisonOfTrajectories(numberOfChorales, otherPiece):
-    # Create the graphs for chorales and the otherPiece
+    """Create the graphs for chorales and the otherPiece."""
     BachDict = BachTonnetzSelect(numberOfChorales)  # Tonnetz Select
     BachGraph = BachTrajectoryGraphs(BachDict)
     graphOfNewPiece = GraphOfNewPiece(otherPiece)
@@ -157,7 +166,7 @@ def ComparisonOfTrajectories(numberOfChorales, otherPiece):
 
 
 def ComparisonOfTrajectoriesUnit(BachDict, otherPiece):
-    # Create the graphs for chorales and the otherPiece
+    """Create the graphs for chorales and the otherPiece."""
     BachGraph = BachTrajectoryGraphs(BachDict)
     graphOfNewPiece = GraphOfNewPiece(otherPiece)
     # Compare the graphs
@@ -193,6 +202,7 @@ def ComparisonOfTrajectoriesUnit(BachDict, otherPiece):
 
 
 def GetWorksByComposer(composerName):
+    """Create graphs of trajectories from corpus."""
     listofWorks = corpus.getComposer(composerName)
     if len(listofWorks) > 150:
         listofWorks = list(islice(listofWorks, 150))
@@ -209,6 +219,7 @@ def GetWorksByComposer(composerName):
 
 
 def GetWorksByDirectory(directory):
+    """Create graphs of trajectories from a local file."""
     dictOfGraphs = dict()
     for file in os.listdir(directory):
         if file.endswith(".mid") or file.endswith(
@@ -222,9 +233,8 @@ def GetWorksByDirectory(directory):
     return dictOfGraphs
 
 
-# The point of the following functions is to find the pieces that deviate
-# from the centralities distribution
 def getCentrCoord(dictOfGraphs):
+    """Find the pieces that deviate from the centralities distribution."""
     coordDict = dict()
     for key, graph in dictOfGraphs.items():
         point = CentralityPoint2D(graph, 3, 'Mix')
@@ -233,6 +243,7 @@ def getCentrCoord(dictOfGraphs):
 
 
 def meanPoint(coordDict):
+    """Compute the mean point from a list of cordinates."""
     x, y, z = zip(*list(coordDict.values()))
 
     mean = (float(format(sum(x) / len(coordDict), '.2f')),
@@ -241,6 +252,7 @@ def meanPoint(coordDict):
 
 
 def getOffPoints(coordDict):
+    """Get the points that deviate from the distribution."""
     distanceDict = dict()
     mean = meanPoint(coordDict)
     for point in coordDict.values():
@@ -254,6 +266,7 @@ def getOffPoints(coordDict):
 
 
 def getInPoint(coordDict):
+    """Get the points that are closer to center of distribution."""
     distanceDict = dict()
     mean = meanPoint(coordDict)
     for point in coordDict.values():
@@ -267,6 +280,7 @@ def getInPoint(coordDict):
 
 
 def getPiecesOutOfDistribution(dictOfGraphs, edge='max'):
+    """Get the pieces that deviate from the distribution."""
     coordDict = getCentrCoord(dictOfGraphs)
     if edge == 'max':
         piece = getOffPoints(coordDict)
@@ -282,6 +296,7 @@ def getPiecesOutOfDistribution(dictOfGraphs, edge='max'):
 
 
 def SortPiecesByDistances(dictOfGraphs):
+    """Make a sortet list of pieces based on the distance from the mean."""
     coordDict = getCentrCoord(dictOfGraphs)
     distanceDict = dict()
     mean = meanPoint(coordDict)
@@ -298,6 +313,7 @@ def SortPiecesByDistances(dictOfGraphs):
 
 
 def twoDictsDistCompare(dictOfGraphs1, dictOfGraphs2):
+    """Compare two dicts of graphs."""
     coordDict1 = getCentrCoord(dictOfGraphs1)
     coordDict2 = getCentrCoord(dictOfGraphs2)
     # mean1 = meanPoint(coordDict1)
