@@ -1,5 +1,7 @@
-# HERE are the base Points for all valid Tonnetze Systems
-# A period of all 12 notes divided by mod 3, mod 4 (always stable)
+"""HERE are the base Points for all valid Tonnetze Systems.
+
+A period of all 12 notes divided by mod 3, mod 4 (always stable)
+"""
 
 # x = 4, y = 3
 NotePointsT345 = {

@@ -1,53 +1,58 @@
+import os
+import pickle
+
+import pretty_midi as ptm
+import music21 as ms
 from Tonnetz_Select import fromMidiToPCS as fmpc
 from Tonnetz_Select import analysisFromCorpus
 from TrajectoryCalculationsWithClass import NewTrajectory, TrajectoryLookBefore
 from graph_creation import CreateGraph
 from FirstNotePosition import PlaceFirstNote
-from structural_functions import mergeDicts
-import os
-import pickle
+from structural_functions import testInput
 from itertools import islice, groupby
 from operator import itemgetter
-import music21 as ms
-import pretty_midi as ptm
-
 
 
 def pickleSave(dictOfGraphs, Composer_Name):
-	print("Enter the directory Location")
-	directory = testInput(path.isdir)
-	file_name = input("The Name of the File")
-	completeName = directory + "/" + file_name + ".p"
-	with open(completeName, 'wb') as config_dictionary_file:
-		# Step 3
-		pickle.dump(dictOfGraphs, config_dictionary_file)
+    """Save a python object(list or dictionary) as a pickle object."""
+    print("Enter the directory Location")
+    directory = testInput(os.path.isdir)
+    file_name = input("The Name of the File")
+    completeName = directory + "/" + file_name + ".p"
+    with open(completeName, 'wb') as config_dictionary_file:
+        # Step 3
+        pickle.dump(dictOfGraphs, config_dictionary_file)
 
 
 def findInstruments(file):
+    """Find the Instruments from a midi file."""
     instruments = []
     time_signatures = []
     s = ms.converter.parse(file)
-    for element in s.recurse() :
-        if 'TimeSignature' in element.classes :
+    for element in s.recurse():
+        if 'TimeSignature' in element.classes:
             time_signatures.append(element.ratioString)
-        if 'Instrument' in element.classes :
+        if 'Instrument' in element.classes:
             x = str(element)
-            if x != '' :
-                if ': ' in x :
+            if x != '':
+                if ': ' in x:
                     newstring = x.split(': ', -1)[1]
                     instruments.append(newstring)
-                else :
+                else:
                     instruments.append(x)
     time_signatures = list(map(itemgetter(0), groupby(time_signatures)))
     return instruments, time_signatures
 
+
 def TempoAdd(directory):
+    """Extract tempo from Midi file via PrettyMidi."""
     s = ptm.PrettyMIDI(directory)
     tempo = s.estimate_tempo()
     return int(tempo)
 
-def GraphOfNewPiece(newPiece, directory):
 
+def GraphOfNewPiece(newPiece, directory):
+    """Create a graph object from a midi file."""
     # extract the directory and the file extension from the piece
     shortfilename = os.path.splitext(os.path.basename(newPiece))[0]
     # Choose from where to parse (directory, corpus)
@@ -65,7 +70,7 @@ def GraphOfNewPiece(newPiece, directory):
             instruments, time_signatures = findInstruments(complete_name)
             tempo = TempoAdd(complete_name)
     firstPoint = PlaceFirstNote(chordList, Tonnetz)
-    # build 2 different trajectories
+    # build trajectory with future
     trajectoryFut = NewTrajectory(chordList, Tonnetz, firstPoint)
     trajectoryFut.addType('Trajectory With Future')
     trajectoryFut.addInstruments(instruments)
@@ -73,7 +78,7 @@ def GraphOfNewPiece(newPiece, directory):
     trajectoryFut.addTempo(tempo)
     graphFut = CreateGraph(trajectoryFut)
     graphFut.addName(shortfilename)
-    
+    # build recursive trajectory
     trajectoryRec = TrajectoryLookBefore(chordList, Tonnetz, firstPoint)
     trajectoryRec.addType('Recursive Trajectory')
     trajectoryRec.addInstruments(instruments)
@@ -81,11 +86,12 @@ def GraphOfNewPiece(newPiece, directory):
     trajectoryRec.addTempo(tempo)
     graphRec = CreateGraph(trajectoryRec)
     graphRec.addName(shortfilename)
-    
+    # return both methods
     return graphFut, graphRec
 
 
 def GetWorksByDirectory(directory, composer, style):
+    """Create graphs of trajectories from a local file."""
     listOfGraphs = []
 #     composer, style, harmony = inputQuestions()
     for file in os.listdir(directory):
@@ -106,10 +112,11 @@ def GetWorksByDirectory(directory, composer, style):
 
 
 def GetWorksByComposer(composerName, composer, style):
+    """Create graphs of trajectories from corpus."""
     listOfGraphs = []
 #     composer, style, harmony = inputQuestions()
     listofWorks = ms.corpus.getComposer(composerName)
-    if len(listofWorks) > 60 :
+    if len(listofWorks) > 60:
         listofWorks = list(islice(listofWorks, 60))
     if len(listofWorks) > 0:
         for piece in listofWorks:

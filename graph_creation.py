@@ -1,12 +1,16 @@
-# A script that takes a trajectory object and builds a graph object 
-# as defined in Graph Class
+"""A script that takes a trajectory object and builds a graph object.
+
+A script that takes a trajectory object and builds a graph object
+as defined in Graph Class.
+"""
 
 from itertools import product
+
 from GraphClass import GraphClass
 
 
-# from trajectory build edges based on cartesian product
 def TrajectoryNoteEdges(trajectory):
+    """From trajectory build edges based on cartesian product."""
     TotalEdges = []
     dist = [-1, 0, 1]
     for dicts in trajectory.chordPositions:
@@ -15,15 +19,15 @@ def TrajectoryNoteEdges(trajectory):
         for couple in cartl:
             (x1, y1), (x2, y2) = couple
             if (x1 - x2) in dist and (y1 - y2) in dist:
-                if not (((x1 - x2) == 1 and (y1 - y2) == -1)
-                        or ((x1 - x2) == -1 and (y1 - y2) == 1)):
+                if not (((x1 - x2) == 1 and (y1 - y2) == -1) or
+                        ((x1 - x2) == -1 and (y1 - y2) == 1)):
                     chordEdges.append(couple)
         TotalEdges.append(chordEdges)
     return TotalEdges
 
 
-# Add Vertex one by one in object
 def CreateVertices(graph):
+    """Add Vertex one by one in object."""
     setOfNodes = NodesSetCreate(graph)
     nodes = dict()
     for index, point in enumerate(setOfNodes):
@@ -32,8 +36,8 @@ def CreateVertices(graph):
     return nodes
 
 
-# Take the set of all duplicate points in trajectory object
 def NodesSetCreate(graph):
+    """Take the set of all duplicate points in trajectory object."""
     listOfNodes = []
     for dictChord in graph.trajectory.chordPositions:
         for node in dictChord.values():
@@ -42,8 +46,8 @@ def NodesSetCreate(graph):
     return setOfNodes
 
 
-# Take the set of all duplicate points in trajectory object
 def EdgesSetCreate(TrajectoryEdges):
+    """Take the set of all duplicate points in trajectory object."""
     listOfEdges = []
     for edgesList in TrajectoryEdges:
         for edge in edgesList:
@@ -52,8 +56,8 @@ def EdgesSetCreate(TrajectoryEdges):
     return setOfEdges, listOfEdges
 
 
-# add weights on edges based on multiplicity
 def EdgeWeights(setOfEdges, multiSetOfEdges):
+    """Add weights on edges based on multiplicity."""
     weights = dict()
     for edge in setOfEdges:
         weights[edge] = multiSetOfEdges.count(edge)
@@ -62,8 +66,8 @@ def EdgeWeights(setOfEdges, multiSetOfEdges):
     return weights
 
 
-# Take the set of all duplicate points in trajectory object
 def CreateEdges(graph, Nodes, Edges):
+    """Take the set of all duplicate points in trajectory object."""
     setOfEdges, multiSetOfEdges = EdgesSetCreate(Edges)
     weights = EdgeWeights(setOfEdges, multiSetOfEdges)
     for edge in setOfEdges:
@@ -71,8 +75,8 @@ def CreateEdges(graph, Nodes, Edges):
             graph.addEdge(edge, weights[edge])
 
 
-# Create the object by encapsulating all functions
 def CreateGraph(trajectory):
+    """Create the object by encapsulating all functions."""
     graph = GraphClass(trajectory)
     edges = TrajectoryNoteEdges(trajectory)
     nodes = CreateVertices(graph)

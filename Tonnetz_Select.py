@@ -1,14 +1,21 @@
-# This is a script to provide all functions in order to automatically select
-# Tonnetz System and modify chords
-import music21 as ms
-from itertools import product
+"""Calculations to automatically select Tonnetz.
+
+This is a script to provide all functions in order to automatically select
+Tonnetz System and modify chords.
+"""
 import ast
+from itertools import product
+
 from Data_and_Dicts import dictOfTonnetze
+import music21 as ms
 
 
-# A functions that receives a parsed file (possibly from corpus) and returns
-# a the chordified list of chords and list of Interval Vectors
 def parsedFile(file):
+    """Take a parsed file and return the list Of Chords and Interval Vectors.
+
+    The file was already parsed possibly from corpus. Then with chordify and
+    PC-Set we compute a list of PC-chords and Interval Vectors.
+    """
     mChords = file.chordify()
     chordList = []
     chordVectors = []
@@ -19,8 +26,12 @@ def parsedFile(file):
     return chordList, chordVectors
 
 
-# The same function as above that first parses the Midi file
 def parseMidi(midifile):
+    """Take a MIDI file and return the list Of Chords and Interval Vectors.
+
+    The file is first parsed, midi or xml. Then with chordify and
+    PC-Set we compute a list of PC-chords and Interval Vectors.
+    """
     mfile = ms.converter.parse(midifile)
     mChords = mfile.chordify()
     chordList = []
@@ -32,8 +43,13 @@ def parseMidi(midifile):
     return chordList, chordVectors
 
 
-# The predicate that tests the representability chord  based on IntVec
 def Connected(l1, x, y, z):
+    """The predicate that tests the representability chord based on IntVec.
+
+    This is the decision predicate that chooses the appropriate Tonnetz for a
+    piece. It matches the Tonnetz axes on every interval vector and checks
+    how many chord are representable in every system.
+    """
     j = 0
     for i in l1:
         if (
@@ -43,8 +59,8 @@ def Connected(l1, x, y, z):
     return j
 
 
-# Taking the max of all representable chords
 def TonnetzConnectivity(chordVectors):
+    """Taking the max of all representable chords."""
     TonnetzConnectivity = {
         'T129': Connected(chordVectors, 0, 1, 2),
         'T138': Connected(chordVectors, 0, 2, 3),
@@ -62,13 +78,14 @@ def TonnetzConnectivity(chordVectors):
     return(GetTheBestTonnetz)
 
 
-# finally choose the appropriate Tonnetz config
 def TonnetzConfigDict(GetTheBestTonnetz):
+    """Finally choose the appropriate Tonnetz config."""
     Tonnetz = dictOfTonnetze[GetTheBestTonnetz]
     return Tonnetz
 
-# Check connectivity based on IntVec
+
 def axesDict(T_axes):
+    """Check connectivity based on Interval Vectors."""
     intervalList = [
         T_axes[0],
         T_axes[1],
@@ -80,6 +97,7 @@ def axesDict(T_axes):
 
 
 def findIfConnected(interval, T_axes):
+    """Find if an interval is Connected."""
     intervalList = axesDict(T_axes)
     if interval in intervalList:
         return 1
@@ -88,6 +106,7 @@ def findIfConnected(interval, T_axes):
 
 
 def removeDoubles(l, lvec):
+    """Remove duplicate consecutive chords."""
     N = len(l)
     nlpc = []
     nlVec = []
@@ -102,6 +121,7 @@ def removeDoubles(l, lvec):
 
 
 def checkEdges(chord, T_axes):
+    """Thouragly check if a chord is connected."""
     if len(chord) == 1:
         return False
     elif len(chord) == 2:
@@ -136,8 +156,11 @@ def checkEdges(chord, T_axes):
 
 
 def checkConnectivityBack(listofchords, currentindex, chord, T_axes, alpha=1):
-    # Check if there are enough elements recursive call and limit the loop of
-    # the recursive call
+    """Check if there are enough elements for recursive call.
+
+    Check if there are enough elements for recursive call
+    and limit the loop of the recursive call.
+    """
     if (currentindex - alpha >= 0 and alpha < 6):
         conexCondition = checkEdges(chord, T_axes)
         if not conexCondition:
@@ -155,8 +178,11 @@ def checkConnectivityBack(listofchords, currentindex, chord, T_axes, alpha=1):
 
 
 def checkConnectivityForth(listofchords, currentindex, chord, T_axes, alpha=1):
-    # Check if there are enough elements recursive call and limit the loop of
-    # the recursive call
+    """Check if there are enough elements for recursive call.
+
+    Check if there are enough elements for recursive call
+    and limit the loop of the recursive call.
+    """
     if (currentindex + alpha < len(listofchords) and alpha < 6):
         conexCondition = checkEdges(chord, T_axes)
         if not conexCondition:
@@ -179,6 +205,11 @@ def checkConnectivityBackForth(
         chord,
         T_axes,
         alpha=1):
+    """Check if there are enough elements for recursive call.
+
+    Check if there are enough elements for recursive call
+    and limit the loop of the recursive call.
+    """
     if listofchords[currentindex - alpha]:
         return []
     else:
@@ -206,6 +237,11 @@ def checkConnectivityForthBack(
         chord,
         T_axes,
         alpha=1):
+    """Check if there are enough elements for recursive call.
+
+    Check if there are enough elements for recursive call
+    and limit the loop of the recursive call.
+    """
     if listofchords[currentindex - alpha]:
         return []
     else:
@@ -228,6 +264,7 @@ def checkConnectivityForthBack(
 
 
 def removeNonConnected(listOfChords, listOfVectors, T_axes):
+    """Modify non connected chords."""
     axe1 = T_axes[0] - 1
     axe2 = T_axes[1] - 1
     if T_axes[2] > 6:
@@ -259,6 +296,7 @@ def removeNonConnected(listOfChords, listOfVectors, T_axes):
 
 
 def fromMidiToPCS(midifile):
+    """Take a Midi file and return a list of chords and the Tonnetz."""
     chordList, chordVectors = parseMidi(midifile)
     Tonnetz = TonnetzConfigDict(TonnetzConnectivity(chordVectors))
     chordListNoDoubles, chordListNoDoublesVec = removeDoubles(
@@ -272,6 +310,7 @@ def fromMidiToPCS(midifile):
 
 
 def analysisFromCorpus(file):
+    """Take a file from corpus and return a list of chords and the Tonnetz."""
     chordList, chordVectors = parsedFile(file)
     Tonnetz = TonnetzConfigDict(TonnetzConnectivity(chordVectors))
     chordListNoDoubles, chordListNoDoublesVec = removeDoubles(
