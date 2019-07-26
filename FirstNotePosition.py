@@ -14,6 +14,6 @@ def PlaceFirstNote(listOfChords, Tonnetz):
     try:
         firstNote = listOfChords[0][0]
         return dictOfTonnetz[TonnetzToString(Tonnetz)][firstNote]
-    except:
+    except KeyError():
         print("This Tonnetz's Initial position is not defined")
         return (0, 0)

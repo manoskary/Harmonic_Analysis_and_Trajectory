@@ -40,3 +40,22 @@ Few Results. . .
 
 Binary Classification average over 8 classes : f1 score = 0.85
 
+
+Some Directions
+=====================
+
+### Tonnetz_select.py
+
+See how to parse Midi, xml or other data. It is the function that parses a file extracts and modifies the chords 
+as PC-Sets and computes the appropriate Tonnetz.
+
+### TrajectoryCalculationWithClass.py
+
+This is the script that effectuates the computation of the trajectory in the Tonnetz Space. There are a few different definitions inside.
+Trajectory is an object defined in "TrajectoryClass.py". The critical value of the Trajectory, among others, is a list of dictionaries of chords with keys the Pitch Class names of the notes and values 2 dimensional integer cordinates in the cartesian plane.
+
+### graph_creation.py
+
+A script that receives a Trajectory object and returns a complete graph object that includes trajectory with additional information about centralities, midiInfo, etc. The graph object is defined in "GraphClass.py"
+
+
