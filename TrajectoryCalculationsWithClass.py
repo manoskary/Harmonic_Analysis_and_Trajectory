@@ -71,7 +71,7 @@ def intervalToPoint(interval, point, T_axes):
     try:
         point = movementDict[interval]
     # here is the definition of Invalid Positions
-    except:
+    except KeyError():
         point = INVALID_POS
     return point
 
@@ -448,6 +448,7 @@ def TrajectoryLookBefore(listOfChords, Tonnetz, origin=(0, 0)):
     return trajectory
 
 # ------------------------TRAJECTORY NO FUTURE------------------------------
+
 
 """Here we build a version of the trajectory which is recursive and doesn't
 fail. We do this by taking the definition of the recursive trajectory and add
