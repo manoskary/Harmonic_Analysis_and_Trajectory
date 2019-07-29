@@ -53,10 +53,10 @@ def axesMovementsDict(T_axes, point):
         0: (x, y),
         T_axes[0]: (x, y + 1),
         T_axes[1]: (x + 1, y),
-        T_axes[2]: (x + 1, y + 1),
+        T_axes[2]: (x - 1, y - 1),
         12 - T_axes[0]: (x, y - 1),
         12 - T_axes[1]: (x - 1, y),
-        12 - T_axes[2]: (x - 1, y - 1)
+        12 - T_axes[2]: (x + 1, y + 1)
     }
     return movementsDict
 
@@ -71,7 +71,7 @@ def intervalToPoint(interval, point, T_axes):
     try:
         point = movementDict[interval]
     # here is the definition of Invalid Positions
-    except KeyError():
+    except:
         point = INVALID_POS
     return point
 
@@ -83,11 +83,11 @@ def checkInvalidPosition(chord, point):
         raise ValueError("Bad reference point")
 
 
-def checkChordValidity(coordDict, chord, axes):
+def checkChordValidity(coordDict, chord, axes, Tonnetz):
     """If coordinates weren't found for all notes throw ERROR."""
     if(any(note not in coordDict for note in chord)):
-        print(chord, coordDict.items(), axes)
-        raise BaseException("Lost chord")
+            print(chord, coordDict.items(), axes, Tonnetz)
+            raise BaseException("Lost chord")
 
 
 def ChordConfiguration(chord, axes, Tonnetz):
@@ -100,15 +100,13 @@ def ChordConfiguration(chord, axes, Tonnetz):
     and we iterate in order to find the coordinates.
     If the iteration exceed the length of the chord throw ERROR.
     """
-    checkInvalidPosition(chord, axes)
     coordDict = {chord[0]: axes}
     n = 0
     while(len(chord) > len(coordDict)):
         for noteA, noteB in product(chord, chord):
             if(noteA in coordDict and noteB not in coordDict):
                 newPoint = intervalToPoint(
-                    (noteB - noteA) %
-                    12, coordDict[noteA], Tonnetz)
+                    (noteB - noteA) % 12, coordDict[noteA], Tonnetz)
                 if isValidPos(newPoint):
                     coordDict[noteB] = newPoint
             if(n > len(chord)):
@@ -121,8 +119,8 @@ def ChordConfiguration(chord, axes, Tonnetz):
                     len(coordDict))
                 raise RuntimeError("Infinite Loop")
         n += 1
-        checkChordValidity(coordDict, chord, axes)
-        return coordDict
+    checkChordValidity(coordDict, chord, axes, Tonnetz)
+    return coordDict
 
 
 def distanceOne(T_axes):
@@ -471,7 +469,7 @@ def lastResort(trajectory):
     lastChordCoord = trajectory.getLastPosition()
     x1, y1 = baseNoteDict[lastChordRandomNote]
     x2, y2 = baseNoteDict[thisChordRandomNote]
-    relation = (x1 - x2, y1 - y2)
+    relation = (x2 - x1, y2 - y1)
     thisChordNoteCoord = (lastChordCoord[lastChordRandomNote][0] + relation[0],
         lastChordCoord[lastChordRandomNote][1] + relation[1])
     coordinates = ChordConfiguration(
