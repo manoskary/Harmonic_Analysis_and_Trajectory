@@ -71,7 +71,7 @@ def intervalToPoint(interval, point, T_axes):
     try:
         point = movementDict[interval]
     # here is the definition of Invalid Positions
-    except:
+    except ValueError:
         point = INVALID_POS
     return point
 
@@ -86,8 +86,8 @@ def checkInvalidPosition(chord, point):
 def checkChordValidity(coordDict, chord, axes, Tonnetz):
     """If coordinates weren't found for all notes throw ERROR."""
     if(any(note not in coordDict for note in chord)):
-            print(chord, coordDict.items(), axes, Tonnetz)
-            raise BaseException("Lost chord")
+        print(chord, coordDict.items(), axes, Tonnetz)
+        raise BaseException("Lost chord")
 
 
 def ChordConfiguration(chord, axes, Tonnetz):
@@ -471,7 +471,8 @@ def lastResort(trajectory):
     x2, y2 = baseNoteDict[thisChordRandomNote]
     relation = (x2 - x1, y2 - y1)
     thisChordNoteCoord = (lastChordCoord[lastChordRandomNote][0] + relation[0],
-        lastChordCoord[lastChordRandomNote][1] + relation[1])
+                          lastChordCoord[lastChordRandomNote][1] + relation[1]
+                          )
     coordinates = ChordConfiguration(
         trajectory.getThisChord(), thisChordNoteCoord, trajectory.Tonnetz)
     return coordinates, []
