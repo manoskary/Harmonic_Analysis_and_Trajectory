@@ -23,7 +23,6 @@ jobs:
           name: run tests
           command: |
              pytest "--flake8"
-             pytest "--docstyle"
              pytest ""ignore": ["E128"]"
 
       - store_artifacts:
